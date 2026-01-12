@@ -1,6 +1,6 @@
 # Multi-Vendor E-Commerce Platform
 
-A comprehensive e-commerce platform similar to Amazon/Flipkart where multiple vendors can sell their products.
+A comprehensive e-commerce platform similar to Amazon/Flipkart where multiple vendors can sell their products with complete email notification system.
 
 ## 🚀 Features
 
@@ -15,7 +15,17 @@ A comprehensive e-commerce platform similar to Amazon/Flipkart where multiple ve
 - Razorpay payment integration
 - Order tracking and management
 - Admin dashboard with analytics
-- Responsive web design
+- **📧 Complete email notification system**
+- Responsive web design with dark/light mode
+
+### 📧 Email Notifications
+- **User Registration**: Welcome emails with role-specific instructions
+- **Seller Management**: Approval/rejection notifications
+- **Product Management**: Product added confirmations
+- **Order Management**: Order placed, status updates, delivery notifications
+- **Payment Processing**: Success/failure notifications with transaction details
+- **Password Reset**: Secure reset links with security guidelines
+- **🔐 Login OTP**: Two-factor authentication with email verification codes
 
 ## 🛠 Tech Stack
 - **Frontend**: HTML, CSS, JavaScript, Bootstrap 5
@@ -23,6 +33,7 @@ A comprehensive e-commerce platform similar to Amazon/Flipkart where multiple ve
 - **Database**: MySQL
 - **Server**: XAMPP (Apache + MySQL)
 - **Payment**: Razorpay Gateway
+- **Email**: Flask-Mail with Gmail SMTP
 - **Image Processing**: Pillow (PIL)
 
 ## 📁 Project Structure
@@ -32,9 +43,16 @@ ecommerce/
 ├── config.py             # Configuration settings
 ├── requirements.txt      # Python dependencies
 ├── test_setup.py         # Setup verification script
+├── test_email.py         # Email testing script
 ├── SETUP_INSTRUCTIONS.md # Detailed setup guide
+├── EMAIL_SETUP_GUIDE.md  # Email configuration guide
+├── OTP_LOGIN_GUIDE.md    # OTP login system guide
 ├── database/
 │   └── schema.sql        # Complete database schema
+├── services/             # Business logic services
+│   ├── __init__.py
+│   ├── email_service.py  # Email notification service
+│   └── otp_service.py    # OTP verification service
 ├── routes/               # Route handlers
 │   ├── __init__.py
 │   ├── auth.py          # Authentication & registration
@@ -46,11 +64,23 @@ ecommerce/
 │   ├── base.html        # Base template with navigation
 │   ├── index.html       # Homepage
 │   ├── auth/            # Login & registration
+│   │   ├── login.html
+│   │   ├── register.html
+│   │   └── verify_otp.html  # OTP verification page
 │   ├── customer/        # Product pages & cart
 │   ├── seller/          # Seller dashboard
-│   └── admin/           # Admin panel
+│   ├── admin/           # Admin panel
+│   └── emails/          # Email templates
+│       ├── base_email.html
+│       ├── registration_success.html
+│       ├── seller_approved.html
+│       ├── product_added.html
+│       ├── order_placed.html
+│       ├── payment_success.html
+│       ├── login_otp.html       # OTP verification email
+│       └── ... (more email templates)
 ├── static/              # Static assets
-│   ├── css/style.css    # Custom styles
+│   ├── css/style.css    # Custom styles with animations
 │   ├── js/main.js       # JavaScript functions
 │   ├── images/          # Static images
 │   └── uploads/         # User uploaded images
@@ -63,6 +93,7 @@ ecommerce/
    ```bash
    # Install XAMPP and Python 3.7+
    # Get Razorpay account credentials
+   # Set up Gmail App Password for email notifications
    ```
 
 2. **Install Dependencies**
@@ -74,19 +105,28 @@ ecommerce/
    - Start XAMPP (Apache + MySQL)
    - Create database `amazon_db`
    - Import `database/schema.sql`
+   - Run: `python update_database_email.py`
 
 4. **Configuration**
    ```bash
    cp .env.example .env
-   # Edit .env with your Razorpay credentials
+   # Edit .env with your credentials:
+   # - Razorpay keys
+   # - Gmail SMTP credentials
    ```
 
-5. **Run Application**
+5. **Email Setup** (See EMAIL_SETUP_GUIDE.md for details)
+   ```bash
+   # Test email configuration
+   python test_email.py
+   ```
+
+6. **Run Application**
    ```bash
    python app.py
    ```
 
-6. **Test Setup**
+7. **Test Setup**
    ```bash
    python test_setup.py
    ```
@@ -98,6 +138,27 @@ ecommerce/
 - Password: admin123
 
 ## 💡 Key Features Implemented
+
+### 📧 Email Notification System
+- ✅ User registration welcome emails
+- ✅ Seller approval/rejection notifications
+- ✅ Product added confirmations
+- ✅ Order placed notifications
+- ✅ Payment success/failure alerts
+- ✅ Order status updates (shipped, delivered)
+- ✅ Password reset emails
+- ✅ Login OTP verification emails
+- ✅ Professional HTML email templates
+- ✅ Email logging and tracking
+
+### 🔐 Login Security & OTP System
+- ✅ Two-factor authentication with email OTP
+- ✅ 6-digit verification codes with 10-minute expiry
+- ✅ Professional OTP email templates
+- ✅ User-friendly verification interface
+- ✅ Automatic OTP cleanup and security
+- ✅ Mobile-responsive OTP entry
+- ✅ Resend functionality with rate limiting
 
 ### Authentication & Security
 - ✅ Role-based authentication (Admin/Seller/Customer)
@@ -140,7 +201,7 @@ ecommerce/
 
 ## 📊 Database Schema
 
-Complete MySQL schema with 9 tables:
+Complete MySQL schema with 11 tables:
 - `users` - Authentication data
 - `customers` - Customer profiles
 - `sellers` - Seller business information
@@ -150,6 +211,8 @@ Complete MySQL schema with 9 tables:
 - `orders` - Order information
 - `order_items` - Individual order items
 - `payments` - Payment transactions
+- `email_logs` - Email notification tracking
+- `login_otps` - OTP verification codes
 
 ## 🎨 UI/UX Features
 
@@ -206,8 +269,6 @@ Complete MySQL schema with 9 tables:
 ## 🔄 Future Enhancements
 
 Potential improvements for production:
-- Email notifications
-- SMS integration
 - Advanced search with Elasticsearch
 - Product reviews and ratings
 - Wishlist functionality
@@ -216,6 +277,9 @@ Potential improvements for production:
 - API for mobile apps
 - Advanced analytics
 - Inventory alerts
+- SMS notifications
+- Push notifications
+- Social media integration
 
 ## 📞 Support
 
