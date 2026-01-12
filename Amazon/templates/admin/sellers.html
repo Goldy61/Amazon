@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Sellers - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2">
+            <div class="sidebar">
+                <h5 class="mb-3">Admin Panel</h5>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a class="nav-link active" href="{{ url_for('admin_sellers') }}">
+                        <i class="fas fa-store"></i> Sellers
+                    </a>
+                    <a class="nav-link" href="{{ url_for('admin_customers') }}">
+                        <i class="fas fa-users"></i> Customers
+                    </a>
+                    <a class="nav-link" href="{{ url_for('admin_categories') }}">
+                        <i class="fas fa-tags"></i> Categories
+                    </a>
+                    <a class="nav-link" href="{{ url_for('admin_orders') }}">
+                        <i class="fas fa-shopping-bag"></i> Orders
+                    </a>
+                    <a class="nav-link" href="{{ url_for('admin_analytics') }}">
+                        <i class="fas fa-chart-bar"></i> Analytics
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Manage Sellers</h2>
+                <span class="text-muted">{{ sellers|length }} total sellers</span>
+            </div>
+
+            {% if sellers %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Business Name</th>
+                                    <th>Owner</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for seller in sellers %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ seller.business_name }}</strong>
+                                        {% if seller.gst_number %}
+                                        <br><small class="text-muted">GST: {{ seller.gst_number }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ seller.owner_name }}</td>
+                                    <td>{{ seller.email }}</td>
+                                    <td>{{ seller.phone }}</td>
+                                    <td>{{ seller.city }}, {{ seller.state }}</td>
+                                    <td>
+                                        {% if not seller.is_active %}
+                                        <span class="badge bg-danger">Blocked</span>
+                                        {% elif not seller.is_approved %}
+                                        <span class="badge bg-warning">Pending Approval</span>
+                                        {% else %}
+                                        <span class="badge bg-success">Active</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ seller.created_at.strftime('%d %b %Y') }}</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            {% if not seller.is_approved %}
+                                            <a href="{{ url_for('approve_seller', seller_id=seller.id) }}" 
+                                               class="btn btn-success" title="Approve Seller">
+                                                <i class="fas fa-check"></i>
+                                            </a>
+                                            {% endif %}
+                                            
+                                            {% if seller.is_active %}
+                                            <a href="{{ url_for('block_seller', seller_id=seller.id) }}" 
+                                               class="btn btn-warning" title="Block Seller"
+                                               onclick="return confirm('Are you sure you want to block this seller?')">
+                                                <i class="fas fa-ban"></i>
+                                            </a>
+                                            {% else %}
+                                            <a href="{{ url_for('toggle_user_status', user_id=seller.user_id) }}" 
+                                               class="btn btn-info" title="Unblock Seller">
+                                                <i class="fas fa-unlock"></i>
+                                            </a>
+                                            {% endif %}
+                                            
+                                            <button class="btn btn-outline-primary" type="button" 
+                                                    data-bs-toggle="collapse" data-bs-target="#details{{ seller.id }}">
+                                                <i class="fas fa-info"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- Seller Details Row -->
+                                <tr class="collapse" id="details{{ seller.id }}">
+                                    <td colspan="8">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <h6>Business Address:</h6>
+                                                        <p>{{ seller.address }}<br>
+                                                        {{ seller.city }}, {{ seller.state }} - {{ seller.pincode }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h6>Banking Details:</h6>
+                                                        {% if seller.bank_account %}
+                                                        <p>Account: {{ seller.bank_account }}<br>
+                                                        IFSC: {{ seller.ifsc_code }}</p>
+                                                        {% else %}
+                                                        <p class="text-muted">Not provided</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-store fa-5x text-muted mb-4"></i>
+                <h4>No sellers registered yet</h4>
+                <p class="text-muted">Sellers will appear here once they register on the platform</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
