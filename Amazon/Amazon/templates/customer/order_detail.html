@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}Order Details - E-Commerce{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Order Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Order Number:</strong> {{ order.order_number }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Order Date:</strong> {{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Order Status:</strong>
+                            <span class="badge bg-{% if order.order_status == 'confirmed' %}success{% elif order.order_status == 'shipped' %}info{% elif order.order_status == 'delivered' %}primary{% else %}warning{% endif %}">
+                                {{ order.order_status.title() }}
+                            </span>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Payment Status:</strong>
+                            <span class="badge bg-{% if order.payment_status == 'completed' %}success{% elif order.payment_status == 'failed' %}danger{% else %}warning{% endif %}">
+                                {{ order.payment_status.title() }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <strong>Total Amount:</strong> 
+                            <span class="h5 text-success">₹{{ "%.2f"|format(order.total_amount) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Order Items</h5>
+                </div>
+                <div class="card-body">
+                    {% for item in order_items %}
+                    <div class="row align-items-center mb-3 pb-3 border-bottom">
+                        <div class="col-md-2">
+                            {% if item.image_url %}
+                            <img src="{{ url_for('static', filename=item.image_url) }}" 
+                                 alt="{{ item.name }}" class="img-fluid rounded">
+                            {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 80px;">
+                                <i class="fas fa-image text-muted"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="mb-1">{{ item.name }}</h6>
+                            <small class="text-muted">Sold by: {{ item.business_name }}</small>
+                        </div>
+                        <div class="col-md-2">
+                            <strong>Qty: {{ item.quantity }}</strong>
+                        </div>
+                        <div class="col-md-2">
+                            <strong>₹{{ "%.2f"|format(item.price) }}</strong>
+                        </div>
+                        <div class="col-md-2">
+                            <strong>₹{{ "%.2f"|format(item.total) }}</strong>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping Address -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Shipping Address</h5>
+                </div>
+                <div class="card-body">
+                    <address>
+                        <strong>{{ order.shipping_address.name }}</strong><br>
+                        {{ order.shipping_address.address }}<br>
+                        {{ order.shipping_address.city }}, {{ order.shipping_address.state }}<br>
+                        {{ order.shipping_address.pincode }}<br>
+                        <strong>Phone:</strong> {{ order.shipping_address.phone }}
+                    </address>
+                </div>
+            </div>
+
+            <!-- Order Timeline -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Order Timeline</h5>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item {% if order.order_status in ['confirmed', 'shipped', 'delivered'] %}completed{% endif %}">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h6>Order Confirmed</h6>
+                                {% if order.order_status in ['confirmed', 'shipped', 'delivered'] %}
+                                <small class="text-muted">{{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item {% if order.order_status in ['shipped', 'delivered'] %}completed{% endif %}">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h6>Order Shipped</h6>
+                                {% if order.order_status in ['shipped', 'delivered'] %}
+                                <small class="text-muted">Processing...</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item {% if order.order_status == 'delivered' %}completed{% endif %}">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h6>Order Delivered</h6>
+                                {% if order.order_status == 'delivered' %}
+                                <small class="text-muted">Delivered successfully</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{{ url_for('order_history') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Orders
+            </a>
+            {% if order.payment_status == 'completed' and order.order_status != 'delivered' %}
+            <button class="btn btn-info" onclick="trackOrder()">
+                <i class="fas fa-truck"></i> Track Order
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -23px;
+    top: 5px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #e9ecef;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px #e9ecef;
+}
+
+.timeline-item.completed .timeline-marker {
+    background: #28a745;
+    box-shadow: 0 0 0 2px #28a745;
+}
+
+.timeline-content h6 {
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.timeline-item.completed .timeline-content h6 {
+    color: #28a745;
+}
+</style>
+
+<script>
+function trackOrder() {
+    alert('Order tracking feature will be available soon!');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Login Verification Code{% endblock %}
+
+{% block content %}
+<h2>🔐 Login Verification Required</h2>
+
+<div class="highlight">
+    <h3>Your Login Verification Code</h3>
+    <p>Someone is trying to access your account. Please use the code below to complete your login.</p>
+</div>
+
+<p>Dear {{ user_name }},</p>
+
+<p>We received a login attempt for your E-Commerce Platform account. To ensure the security of your account, please use the verification code below:</p>
+
+<div class="order-details" style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; margin: 25px 0;">
+    <h2 style="color: white; margin: 0; font-size: 36px; letter-spacing: 8px; font-weight: bold;">{{ otp_code }}</h2>
+    <p style="color: #f0f0f0; margin: 10px 0 0 0; font-size: 14px;">Verification Code</p>
+</div>
+
+<div class="warning">
+    <h4>⏰ Important Security Information:</h4>
+    <ul>
+        <li>🕐 This code expires in <strong>10 minutes</strong></li>
+        <li>🔒 Use this code only on our official website</li>
+        <li>🛡️ Never share this code with anyone</li>
+        <li>🚫 If you didn't request this, please ignore this email</li>
+    </ul>
+</div>
+
+<h3>🔒 How to Use This Code:</h3>
+<ol>
+    <li>Return to the login page where you entered your credentials</li>
+    <li>Enter the 6-digit verification code above</li>
+    <li>Click "Verify & Login" to access your account</li>
+    <li>You'll be automatically logged in upon successful verification</li>
+</ol>
+
+<div class="success">
+    <h4>🛡️ Why We Use OTP Verification:</h4>
+    <p>This extra security step helps protect your account from unauthorized access, even if someone knows your password.</p>
+</div>
+
+<h3>🚫 Didn't Request This Login?</h3>
+<p>If you didn't try to log in:</p>
+<ul>
+    <li>❌ Simply ignore this email - the code will expire automatically</li>
+    <li>🔐 Consider changing your password immediately</li>
+    <li>🛡️ Enable additional security measures</li>
+    <li>📧 Contact our support team if you're concerned</li>
+</ul>
+
+<h3>🔐 Account Security Tips:</h3>
+<ul>
+    <li><strong>Strong Passwords:</strong> Use unique, complex passwords</li>
+    <li><strong>Regular Updates:</strong> Change passwords periodically</li>
+    <li><strong>Secure Devices:</strong> Only login from trusted devices</li>
+    <li><strong>Logout Properly:</strong> Always logout when using shared computers</li>
+    <li><strong>Monitor Activity:</strong> Check your account regularly for suspicious activity</li>
+</ul>
+
+<div class="highlight">
+    <h4>⚡ Quick Login Process:</h4>
+    <p>Copy the code above → Return to login page → Enter code → Access your account securely!</p>
+</div>
+
+<h3>📞 Need Help?</h3>
+<p>If you're having trouble with the verification process:</p>
+<ul>
+    <li>📧 Email: support@ecommerce.com</li>
+    <li>📞 Phone: +91-XXXXXXXXXX</li>
+    <li>💬 Live Chat: Available 24/7</li>
+    <li>📱 WhatsApp: +91-XXXXXXXXXX</li>
+</ul>
+
+<div class="success">
+    <h4>🔒 Your Security Matters:</h4>
+    <p>We take your account security seriously. This verification step ensures that only you can access your account, keeping your personal information and purchase history safe.</p>
+</div>
+
+<h3>✅ After Successful Login:</h3>
+<ul>
+    <li>🏠 You'll be redirected to your dashboard</li>
+    <li>🔔 You may receive a login confirmation email</li>
+    <li>📱 Consider enabling additional security features</li>
+    <li>🛒 Continue with your shopping or account management</li>
+</ul>
+
+<p>Thank you for helping us keep your account secure!</p>
+
+<p><strong>Best regards,<br>The E-Commerce Platform Security Team</strong></p>
+{% endblock %}

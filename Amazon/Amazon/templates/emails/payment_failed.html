@@ -1,0 +1,98 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Payment Failed{% endblock %}
+
+{% block content %}
+<h2>💳 Payment Issue</h2>
+
+<div class="warning">
+    <h3>Payment could not be processed</h3>
+    <p>There was an issue processing your payment for order {{ order_number }}.</p>
+</div>
+
+<p>Dear {{ customer_name }},</p>
+
+<p>We encountered an issue while processing your payment. Don't worry - your order is still reserved and no amount has been charged to your account.</p>
+
+<div class="order-details">
+    <h3>📋 Order Details</h3>
+    <ul>
+        <li><strong>Order Number:</strong> {{ order_number }}</li>
+        <li><strong>Order Status:</strong> ⏳ Payment Pending</li>
+        <li><strong>Attempt Date:</strong> {{ moment().format('MMMM Do YYYY, h:mm a') if moment else 'Today' }}</li>
+        <li><strong>Next Action:</strong> Retry Payment</li>
+    </ul>
+</div>
+
+<h3>🔄 What You Can Do:</h3>
+<ul>
+    <li>💳 Try a different payment method</li>
+    <li>🏦 Check with your bank for any restrictions</li>
+    <li>📱 Ensure sufficient balance in your account</li>
+    <li>🔄 Retry the payment process</li>
+    <li>📞 Contact our support team for assistance</li>
+</ul>
+
+<a href="#" class="button">Retry Payment</a>
+<a href="#" class="button">Change Payment Method</a>
+
+<div class="highlight">
+    <h4>⏰ Order Reservation:</h4>
+    <p>Your order is reserved for <strong>24 hours</strong>. Please complete the payment within this time to avoid cancellation.</p>
+</div>
+
+<h3>💡 Common Payment Issues:</h3>
+<ul>
+    <li><strong>Insufficient Funds:</strong> Check your account balance</li>
+    <li><strong>Card Limits:</strong> Daily/monthly transaction limits exceeded</li>
+    <li><strong>Bank Restrictions:</strong> Online payments blocked by bank</li>
+    <li><strong>Network Issues:</strong> Poor internet connection during payment</li>
+    <li><strong>Card Expiry:</strong> Check if your card is still valid</li>
+</ul>
+
+<h3>🛡️ Alternative Payment Methods:</h3>
+<ul>
+    <li>💳 Try a different credit/debit card</li>
+    <li>🏦 Net banking from your bank</li>
+    <li>📱 UPI payments (Google Pay, PhonePe, Paytm)</li>
+    <li>💰 Digital wallets</li>
+    <li>📞 Contact us for other options</li>
+</ul>
+
+<div class="success">
+    <h4>🔒 Your Security is Our Priority:</h4>
+    <ul>
+        <li>❌ No amount has been deducted</li>
+        <li>🛡️ Your card details remain secure</li>
+        <li>🔐 All transactions are encrypted</li>
+        <li>✅ Safe to retry payment</li>
+    </ul>
+</div>
+
+<h3>📞 Need Immediate Help?</h3>
+<p>Our payment support team is available to assist you:</p>
+<ul>
+    <li>📧 Email: payments@ecommerce.com</li>
+    <li>📞 Phone: +91-XXXXXXXXXX (24/7)</li>
+    <li>💬 Live Chat: Instant support available</li>
+    <li>📱 WhatsApp: +91-XXXXXXXXXX</li>
+</ul>
+
+<h3>🏦 Bank Contact Information:</h3>
+<p>If the issue persists, please contact your bank:</p>
+<ul>
+    <li>📞 Call the customer service number on your card</li>
+    <li>💬 Use your bank's mobile app chat support</li>
+    <li>🌐 Visit your bank's website for online help</li>
+    <li>🏢 Visit the nearest branch if needed</li>
+</ul>
+
+<div class="highlight">
+    <h4>⚡ Quick Resolution:</h4>
+    <p>Most payment issues are resolved within minutes. Try again with a different payment method or contact us for immediate assistance.</p>
+</div>
+
+<p>We apologize for the inconvenience and are here to help you complete your purchase successfully.</p>
+
+<p><strong>Thank you for your patience!<br>The E-Commerce Platform Team</strong></p>
+{% endblock %}

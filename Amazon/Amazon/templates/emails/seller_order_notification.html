@@ -1,0 +1,128 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}New Order Received{% endblock %}
+
+{% block content %}
+<h2>🛒 New Order Received!</h2>
+
+<div class="success">
+    <h3>Congratulations! You have a new order!</h3>
+    <p>Order {{ order_number }} includes your product: {{ product_name }}</p>
+</div>
+
+<p>Dear {{ seller_name }},</p>
+
+<p>Great news! A customer has placed an order for your product. Here are the details:</p>
+
+<div class="order-details">
+    <h3>📦 Order Details</h3>
+    <ul>
+        <li><strong>Order Number:</strong> {{ order_number }}</li>
+        <li><strong>Product:</strong> {{ product_name }}</li>
+        <li><strong>Quantity:</strong> {{ quantity }}</li>
+        <li><strong>Order Date:</strong> {{ moment().format('MMMM Do YYYY, h:mm a') if moment else 'Today' }}</li>
+        <li><strong>Status:</strong> ⏳ Awaiting Processing</li>
+    </ul>
+</div>
+
+<h3>🚀 Action Required:</h3>
+<ul>
+    <li>✅ Confirm the order in your seller dashboard</li>
+    <li>📦 Prepare the product for shipping</li>
+    <li>🏷️ Print shipping labels</li>
+    <li>📋 Update order status to "Processing"</li>
+    <li>🚚 Ship within 1-2 business days</li>
+</ul>
+
+<a href="#" class="button">View Order Details</a>
+<a href="#" class="button">Process Order</a>
+
+<div class="highlight">
+    <h4>⏰ Processing Timeline:</h4>
+    <ul>
+        <li><strong>Order Confirmation:</strong> Within 2 hours</li>
+        <li><strong>Processing:</strong> 1-2 business days</li>
+        <li><strong>Shipping:</strong> Same or next business day</li>
+        <li><strong>Customer Notification:</strong> Automatic updates</li>
+    </ul>
+</div>
+
+<h3>📋 Seller Checklist:</h3>
+<ul>
+    <li>☐ Verify product availability</li>
+    <li>☐ Check product quality</li>
+    <li>☐ Prepare packaging materials</li>
+    <li>☐ Print shipping label</li>
+    <li>☐ Update order status</li>
+    <li>☐ Arrange pickup/drop-off</li>
+</ul>
+
+<h3>📦 Packaging Guidelines:</h3>
+<ul>
+    <li><strong>Secure Packaging:</strong> Use appropriate packaging materials</li>
+    <li><strong>Product Protection:</strong> Ensure items are well-protected</li>
+    <li><strong>Labeling:</strong> Clear and accurate shipping labels</li>
+    <li><strong>Invoice:</strong> Include order invoice in package</li>
+    <li><strong>Branding:</strong> Add your business card/promotional material</li>
+</ul>
+
+<div class="success">
+    <h4>💰 Payment Information:</h4>
+    <ul>
+        <li>💳 Customer payment has been confirmed</li>
+        <li>💰 Your earnings will be credited after delivery</li>
+        <li>📊 Track earnings in your seller dashboard</li>
+        <li>🏦 Automatic payout to your registered account</li>
+    </ul>
+</div>
+
+<h3>🚚 Shipping Options:</h3>
+<ul>
+    <li>📦 Use our recommended shipping partners</li>
+    <li>🚚 Arrange your own logistics</li>
+    <li>📱 Generate shipping labels from dashboard</li>
+    <li>📍 Provide tracking information to customers</li>
+</ul>
+
+<h3>⭐ Customer Satisfaction Tips:</h3>
+<ul>
+    <li><strong>Fast Processing:</strong> Ship orders quickly</li>
+    <li><strong>Quality Check:</strong> Ensure product quality before shipping</li>
+    <li><strong>Communication:</strong> Keep customers updated</li>
+    <li><strong>Packaging:</strong> Professional and secure packaging</li>
+    <li><strong>Follow-up:</strong> Check customer satisfaction after delivery</li>
+</ul>
+
+<div class="highlight">
+    <h4>🔔 Automatic Notifications:</h4>
+    <p>Customers will automatically receive email updates when you:</p>
+    <ul>
+        <li>✅ Confirm the order</li>
+        <li>📦 Mark as shipped</li>
+        <li>🚚 Provide tracking information</li>
+        <li>✅ Confirm delivery</li>
+    </ul>
+</div>
+
+<h3>📞 Seller Support:</h3>
+<p>Need help processing this order?</p>
+<ul>
+    <li>📧 Email: seller-support@ecommerce.com</li>
+    <li>📞 Phone: +91-XXXXXXXXXX</li>
+    <li>💬 Live Chat: Available in seller dashboard</li>
+    <li>📚 Seller Guide: Order processing best practices</li>
+</ul>
+
+<h3>📊 Performance Metrics:</h3>
+<p>Remember, fast and reliable order processing helps improve:</p>
+<ul>
+    <li>⭐ Your seller rating</li>
+    <li>🔍 Product visibility in search</li>
+    <li>💰 Sales and revenue</li>
+    <li>👥 Customer trust and loyalty</li>
+</ul>
+
+<p>Congratulations on your sale! Process this order promptly to maintain excellent customer service.</p>
+
+<p><strong>Happy Selling!<br>The E-Commerce Platform Team</strong></p>
+{% endblock %}

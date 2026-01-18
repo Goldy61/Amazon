@@ -1,0 +1,96 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Payment Successful{% endblock %}
+
+{% block content %}
+<h2>💳 Payment Successful!</h2>
+
+<div class="success">
+    <h3>Your payment has been processed successfully!</h3>
+    <p>Payment of ₹{{ "%.2f"|format(payment_amount) }} for order {{ order_number }} is confirmed.</p>
+</div>
+
+<p>Dear {{ customer_name }},</p>
+
+<p>Great news! Your payment has been successfully processed and your order is now confirmed.</p>
+
+<div class="order-details">
+    <h3>💰 Payment Details</h3>
+    <ul>
+        <li><strong>Order Number:</strong> {{ order_number }}</li>
+        <li><strong>Payment Amount:</strong> ₹{{ "%.2f"|format(payment_amount) }}</li>
+        <li><strong>Payment Date:</strong> {{ moment().format('MMMM Do YYYY, h:mm a') if moment else 'Today' }}</li>
+        <li><strong>Payment Method:</strong> Razorpay (Secure)</li>
+        <li><strong>Status:</strong> ✅ Confirmed</li>
+    </ul>
+</div>
+
+<h3>📦 Order Processing:</h3>
+<p>Now that your payment is confirmed, here's what happens next:</p>
+<ul>
+    <li>✅ Sellers have been notified of your order</li>
+    <li>📦 Products are being prepared for shipping</li>
+    <li>🏷️ Items will be packaged with care</li>
+    <li>🚚 Shipping details will be sent to you soon</li>
+    <li>📱 You can track your order in real-time</li>
+</ul>
+
+<a href="#" class="button">Track Your Order</a>
+<a href="#" class="button">Download Invoice</a>
+
+<div class="highlight">
+    <h4>📅 Expected Timeline:</h4>
+    <ul>
+        <li><strong>Order Confirmation:</strong> ✅ Complete</li>
+        <li><strong>Processing:</strong> 1-2 business days</li>
+        <li><strong>Shipping:</strong> 2-5 business days</li>
+        <li><strong>Delivery:</strong> 3-7 business days</li>
+    </ul>
+</div>
+
+<h3>🔔 Notifications:</h3>
+<p>You'll receive email updates for:</p>
+<ul>
+    <li>📦 When your order is packed and ready</li>
+    <li>🚚 Shipping confirmation with tracking number</li>
+    <li>📍 Real-time delivery updates</li>
+    <li>✅ Delivery confirmation</li>
+</ul>
+
+<h3>🛡️ Payment Security:</h3>
+<div class="success">
+    <p><strong>Your payment is 100% secure!</strong></p>
+    <ul>
+        <li>🔒 Processed through Razorpay's secure gateway</li>
+        <li>🛡️ Bank-level encryption and security</li>
+        <li>💳 Your card details are never stored</li>
+        <li>✅ PCI DSS compliant payment processing</li>
+    </ul>
+</div>
+
+<h3>📧 Receipt & Invoice:</h3>
+<ul>
+    <li>📄 Digital receipt sent to your email</li>
+    <li>🧾 Tax invoice available for download</li>
+    <li>💼 Business purchases: GST details included</li>
+    <li>📱 Access receipts anytime in your account</li>
+</ul>
+
+<h3>❓ Need Help?</h3>
+<p>If you have any questions about your payment or order:</p>
+<ul>
+    <li>📧 Email: payments@ecommerce.com</li>
+    <li>📞 Phone: +91-XXXXXXXXXX</li>
+    <li>💬 Live Chat: Available 24/7</li>
+    <li>📱 WhatsApp Support: +91-XXXXXXXXXX</li>
+</ul>
+
+<div class="highlight">
+    <h4>🎁 Thank You Bonus:</h4>
+    <p>As a token of appreciation, you've earned loyalty points for this purchase! Check your account for exclusive offers and discounts.</p>
+</div>
+
+<p>Thank you for your purchase! We're working hard to get your order to you as quickly as possible.</p>
+
+<p><strong>Happy Shopping!<br>The E-Commerce Platform Team</strong></p>
+{% endblock %}

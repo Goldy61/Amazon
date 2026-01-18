@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2">
+            <div class="sidebar">
+                <h5 class="mb-3">Admin Panel</h5>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a class="nav-link" href="{{ url_for('admin_sellers') }}">
+                        <i class="fas fa-store"></i> Sellers
+                    </a>
+                    <a class="nav-link" href="{{ url_for('admin_customers') }}">
+                        <i class="fas fa-users"></i> Customers
+                    </a>
+                    <a class="nav-link" href="{{ url_for('admin_categories') }}">
+                        <i class="fas fa-tags"></i> Categories
+                    </a>
+                    <a class="nav-link" href="{{ url_for('admin_orders') }}">
+                        <i class="fas fa-shopping-bag"></i> Orders
+                    </a>
+                    <a class="nav-link active" href="{{ url_for('admin_analytics') }}">
+                        <i class="fas fa-chart-bar"></i> Analytics
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Sales Analytics</h2>
+                <span class="text-muted">Platform Performance Overview</span>
+            </div>
+
+            <!-- Monthly Sales -->
+            {% if monthly_sales %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Monthly Sales Performance</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Orders</th>
+                                    <th>Revenue</th>
+                                    <th>Avg Order Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sale in monthly_sales %}
+                                <tr>
+                                    <td>{{ sale.month }}</td>
+                                    <td>{{ sale.orders }}</td>
+                                    <td>₹{{ "%.2f"|format(sale.revenue) }}</td>
+                                    <td>₹{{ "%.2f"|format(sale.revenue / sale.orders) if sale.orders > 0 else 0 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="row">
+                <!-- Top Categories -->
+                <div class="col-md-6">
+                    {% if top_categories %}
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Top Selling Categories</h5>
+                        </div>
+                        <div class="card-body">
+                            {% for category in top_categories %}
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h6 class="mb-0">{{ category.name }}</h6>
+                                    <small class="text-muted">{{ category.sales_count }} sales</small>
+                                </div>
+                                <div class="text-end">
+                                    <strong>₹{{ "%.2f"|format(category.revenue) }}</strong>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Top Sellers -->
+                <div class="col-md-6">
+                    {% if top_sellers %}
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Top Performing Sellers</h5>
+                        </div>
+                        <div class="card-body">
+                            {% for seller in top_sellers %}
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h6 class="mb-0">{{ seller.business_name }}</h6>
+                                    <small class="text-muted">{{ seller.orders }} orders</small>
+                                </div>
+                                <div class="text-end">
+                                    <strong>₹{{ "%.2f"|format(seller.revenue) }}</strong>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- No Data Message -->
+            {% if not monthly_sales and not top_categories and not top_sellers %}
+            <div class="text-center py-5">
+                <i class="fas fa-chart-bar fa-5x text-muted mb-4"></i>
+                <h4>No analytics data available</h4>
+                <p class="text-muted">Analytics will appear here once there are completed orders on the platform</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
