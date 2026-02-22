@@ -1,0 +1,144 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Order Status Update{% endblock %}
+
+{% block content %}
+<h2>📦 Order Status Update</h2>
+
+{% if new_status == 'confirmed' %}
+<div class="success">
+    <h3>✅ Order Confirmed!</h3>
+    <p>Your order {{ order_number }} has been confirmed and is being processed.</p>
+</div>
+{% elif new_status == 'shipped' %}
+<div class="highlight">
+    <h3>🚚 Order Shipped!</h3>
+    <p>Your order {{ order_number }} is on its way to you!</p>
+</div>
+{% elif new_status == 'delivered' %}
+<div class="success">
+    <h3>🎉 Order Delivered!</h3>
+    <p>Your order {{ order_number }} has been delivered successfully.</p>
+</div>
+{% elif new_status == 'cancelled' %}
+<div class="warning">
+    <h3>❌ Order Cancelled</h3>
+    <p>Your order {{ order_number }} has been cancelled.</p>
+</div>
+{% endif %}
+
+<p>Dear {{ customer_name }},</p>
+
+<p>{{ status_message }}.</p>
+
+<div class="order-details">
+    <h3>📋 Order Information</h3>
+    <ul>
+        <li><strong>Order Number:</strong> {{ order_number }}</li>
+        <li><strong>Current Status:</strong> {{ new_status.title() }}</li>
+        <li><strong>Update Date:</strong> {{ moment().format('MMMM Do YYYY, h:mm a') if moment else 'Today' }}</li>
+    </ul>
+</div>
+
+{% if new_status == 'confirmed' %}
+<h3>📦 What's Next:</h3>
+<ul>
+    <li>🏭 Sellers are preparing your items</li>
+    <li>📦 Products will be carefully packaged</li>
+    <li>🏷️ Shipping labels are being generated</li>
+    <li>🚚 Items will be dispatched soon</li>
+    <li>📧 You'll receive shipping notification</li>
+</ul>
+
+<div class="highlight">
+    <h4>⏰ Expected Timeline:</h4>
+    <ul>
+        <li><strong>Processing:</strong> 1-2 business days</li>
+        <li><strong>Shipping:</strong> 2-5 business days</li>
+        <li><strong>Delivery:</strong> 3-7 business days</li>
+    </ul>
+</div>
+
+{% elif new_status == 'shipped' %}
+<h3>🚚 Shipping Information:</h3>
+<ul>
+    <li>📦 Your package is in transit</li>
+    <li>🔍 Tracking number will be provided shortly</li>
+    <li>📱 Real-time tracking available</li>
+    <li>🚚 Estimated delivery: 2-5 business days</li>
+    <li>📧 Delivery updates via email/SMS</li>
+</ul>
+
+<div class="highlight">
+    <h4>📍 Track Your Package:</h4>
+    <p>You can track your order in real-time using our tracking system. You'll receive the tracking number shortly.</p>
+</div>
+
+{% elif new_status == 'delivered' %}
+<h3>🎉 Delivery Completed:</h3>
+<ul>
+    <li>✅ Package delivered successfully</li>
+    <li>📦 Please check your delivery location</li>
+    <li>📋 Confirm receipt of all items</li>
+    <li>⭐ Rate your shopping experience</li>
+    <li>💬 Leave product reviews</li>
+</ul>
+
+<div class="success">
+    <h4>🎁 Enjoy Your Purchase!</h4>
+    <p>We hope you love your new items! If you have any issues, our customer support team is here to help.</p>
+</div>
+
+<a href="#" class="button">Rate & Review</a>
+
+{% elif new_status == 'cancelled' %}
+<h3>💰 Refund Information:</h3>
+<ul>
+    <li>💳 Refund will be processed automatically</li>
+    <li>⏰ Refund timeline: 5-7 business days</li>
+    <li>🏦 Amount will be credited to original payment method</li>
+    <li>📧 Refund confirmation email will be sent</li>
+    <li>📞 Contact support for any refund queries</li>
+</ul>
+
+<div class="highlight">
+    <h4>🔄 Want to Reorder?</h4>
+    <p>You can easily reorder the same items from your order history. We're sorry for any inconvenience caused.</p>
+</div>
+
+<a href="#" class="button">Reorder Items</a>
+{% endif %}
+
+<a href="#" class="button">View Order Details</a>
+<a href="#" class="button">Track Order</a>
+
+{% if new_status != 'cancelled' %}
+<h3>📱 Stay Updated:</h3>
+<ul>
+    <li>📧 Email notifications for major updates</li>
+    <li>📱 SMS alerts for delivery attempts</li>
+    <li>🔔 Push notifications via our mobile app</li>
+    <li>🌐 Real-time tracking on our website</li>
+</ul>
+{% endif %}
+
+<h3>❓ Questions or Concerns?</h3>
+<p>Our customer support team is always ready to help:</p>
+<ul>
+    <li>📧 Email: apurvapatel2852@gmail.com</li>
+    <li>📞 Phone: +91-8153955701</li>
+    <li>💬 Live Chat: Available 24/7</li>
+    <li>📱 WhatsApp: +91-8153955701</li>
+</ul>
+
+{% if new_status == 'delivered' %}
+<div class="highlight">
+    <h4>🌟 Share Your Experience:</h4>
+    <p>Your feedback helps other customers make informed decisions. Please take a moment to rate the products and your overall shopping experience.</p>
+</div>
+{% endif %}
+
+<p>Thank you for choosing our platform for your shopping needs!</p>
+
+<p><strong>Best regards,<br>The E-Commerce Platform Team</strong></p>
+{% endblock %}

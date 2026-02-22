@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Seller Dashboard - E-Commerce{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2">
+            <div class="sidebar">
+                <h5 class="mb-3">Seller Panel</h5>
+                <nav class="nav flex-column">
+                    <a class="nav-link active" href="{{ url_for('seller_dashboard') }}">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a class="nav-link" href="{{ url_for('seller_products') }}">
+                        <i class="fas fa-box"></i> Products
+                    </a>
+                    <a class="nav-link" href="{{ url_for('add_product') }}">
+                        <i class="fas fa-plus"></i> Add Product
+                    </a>
+                    <a class="nav-link" href="{{ url_for('seller_orders') }}">
+                        <i class="fas fa-shopping-bag"></i> Orders
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Dashboard</h2>
+                <span class="text-muted">Welcome, {{ session.name }}</span>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card dashboard-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title text-muted">Total Products</h6>
+                                    <h3 class="mb-0">{{ total_products }}</h3>
+                                </div>
+                                <div class="text-primary">
+                                    <i class="fas fa-box fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <div class="card dashboard-card success">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title text-muted">Total Orders</h6>
+                                    <h3 class="mb-0">{{ total_orders }}</h3>
+                                </div>
+                                <div class="text-success">
+                                    <i class="fas fa-shopping-bag fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <div class="card dashboard-card warning">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title text-muted">Pending Orders</h6>
+                                    <h3 class="mb-0">{{ pending_orders }}</h3>
+                                </div>
+                                <div class="text-warning">
+                                    <i class="fas fa-clock fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <div class="card dashboard-card info">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title text-muted">Total Revenue</h6>
+                                    <h3 class="mb-0">₹{{ "%.2f"|format(total_revenue) }}</h3>
+                                </div>
+                                <div class="text-info">
+                                    <i class="fas fa-rupee-sign fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Orders</h5>
+                    <a href="{{ url_for('seller_orders') }}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_orders %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Product</th>
+                                    <th>Customer</th>
+                                    <th>Quantity</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in recent_orders %}
+                                <tr>
+                                    <td>{{ order.order_number }}</td>
+                                    <td>{{ order.product_name }}</td>
+                                    <td>{{ order.customer_name|replace('"', '') }}</td>
+                                    <td>{{ order.quantity }}</td>
+                                    <td>₹{{ "%.2f"|format(order.total) }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'warning' if order.status == 'pending' else 'info' if order.status == 'confirmed' else 'primary' if order.status == 'shipped' else 'success' }}">
+                                            {{ order.status.title() }}
+                                        </span>
+                                    </td>
+                                    <td>{{ order.order_date.strftime('%d %b %Y') }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+                        <h5>No orders yet</h5>
+                        <p class="text-muted">Orders will appear here once customers start buying your products</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
