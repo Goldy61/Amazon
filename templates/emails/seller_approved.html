@@ -1,0 +1,69 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Seller Account Approved{% endblock %}
+
+{% block content %}
+<h2>🎉 Congratulations {{ seller_name }}!</h2>
+
+<div class="success">
+    <h3>Your Seller Account Has Been Approved!</h3>
+    <p>You can now start selling on our platform.</p>
+</div>
+
+<p>Dear {{ seller_name }},</p>
+
+<p>Great news! Your seller account for <strong>{{ business_name }}</strong> has been reviewed and approved by our admin team.</p>
+
+<div class="highlight">
+    <h4>🏪 Business Details Approved:</h4>
+    <ul>
+        <li><strong>Business Name:</strong> {{ business_name }}</li>
+        <li><strong>Owner Name:</strong> {{ seller_name }}</li>
+        <li><strong>Approval Date:</strong> {{ moment().format('MMMM Do YYYY, h:mm a') if moment else 'Today' }}</li>
+    </ul>
+</div>
+
+<h3>🚀 What You Can Do Now:</h3>
+<ul>
+    <li>📦 Add and manage your products</li>
+    <li>💰 Set competitive prices</li>
+    <li>📸 Upload high-quality product images</li>
+    <li>📊 Track your sales and earnings</li>
+    <li>📋 Manage customer orders</li>
+    <li>🚚 Update order status and shipping</li>
+</ul>
+
+<a href="#" class="button">Access Seller Dashboard</a>
+
+<div class="order-details">
+    <h3>📋 Getting Started Checklist:</h3>
+    <ul>
+        <li>✅ Complete your seller profile</li>
+        <li>✅ Add your first product</li>
+        <li>✅ Set up payment details</li>
+        <li>✅ Configure shipping options</li>
+        <li>✅ Review seller guidelines</li>
+    </ul>
+</div>
+
+<h3>💡 Tips for Success:</h3>
+<ul>
+    <li><strong>Quality Photos:</strong> Use clear, high-resolution product images</li>
+    <li><strong>Detailed Descriptions:</strong> Provide comprehensive product information</li>
+    <li><strong>Competitive Pricing:</strong> Research market prices for your products</li>
+    <li><strong>Fast Shipping:</strong> Process orders quickly to maintain good ratings</li>
+    <li><strong>Customer Service:</strong> Respond promptly to customer inquiries</li>
+</ul>
+
+<h3>📞 Seller Support:</h3>
+<p>Our dedicated seller support team is here to help you succeed:</p>
+<ul>
+    <li>📧 Email: seller-support@ecommerce.com</li>
+    <li>📞 Phone: +91-XXXXXXXXXX</li>
+    <li>💬 Seller Chat: Available in your dashboard</li>
+    <li>📚 Seller Guide: Complete documentation available</li>
+</ul>
+
+<p>We're excited to see your business grow on our platform!</p>
+<p><strong>Best regards,<br>The E-Commerce Platform Team</strong></p>
+{% endblock %}

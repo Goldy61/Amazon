@@ -1,0 +1,34 @@
+# Environment variables (contains secrets)
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Uploads (user-generated content)
+static/uploads/products/*
+static/uploads/profiles/*
+!static/uploads/products/.gitkeep
+!static/uploads/profiles/.gitkeep
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Database backups
+*.sql.bak

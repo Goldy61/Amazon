@@ -1,0 +1,421 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="auth-card card shadow-lg border-0">
+                <div class="auth-card-header text-center py-4">
+                    <i class="fas fa-user-plus fa-3x mb-2"></i>
+                    <h4 class="mb-0">Create Account</h4>
+                    <small class="opacity-75">Join our platform today</small>
+                </div>
+                <div class="card-body p-4">
+
+                    <form method="POST" id="registerForm" novalidate>
+
+                        <!-- Role -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Register as <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
+                                <select class="form-select" id="role" name="role" onchange="toggleFields()">
+                                    <option value="">— Select Role —</option>
+                                    <option value="customer">🛒 Customer</option>
+                                    <option value="seller">🏪 Seller</option>
+                                </select>
+                                <div class="invalid-feedback">Please select a role.</div>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email Address <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input type="email" class="form-control" id="email" name="email"
+                                       placeholder="you@example.com" autocomplete="email">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-1">
+                            <label class="form-label fw-semibold">Password <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="password" name="password"
+                                       placeholder="Min 8 characters" autocomplete="new-password">
+                                <button class="btn btn-outline-secondary" type="button" onclick="togglePwd('password','eye1')" tabindex="-1">
+                                    <i class="fas fa-eye" id="eye1"></i>
+                                </button>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+
+                        <!-- Password strength bar -->
+                        <div class="mb-3">
+                            <div class="strength-bar-wrap">
+                                <div class="strength-bar" id="strengthBar"></div>
+                            </div>
+                            <small id="strengthText" class="strength-text"></small>
+                            <div class="password-rules mt-1" id="pwdRules">
+                                <span id="r-len"  class="rule">✗ At least 8 characters</span>
+                                <span id="r-upper" class="rule">✗ Uppercase letter</span>
+                                <span id="r-num"  class="rule">✗ Number</span>
+                                <span id="r-sym"  class="rule">✗ Special character</span>
+                            </div>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Confirm Password <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock-open"></i></span>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+                                       placeholder="Re-enter password" autocomplete="new-password">
+                                <button class="btn btn-outline-secondary" type="button" onclick="togglePwd('confirm_password','eye2')" tabindex="-1">
+                                    <i class="fas fa-eye" id="eye2"></i>
+                                </button>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+
+                        <!-- ── CUSTOMER FIELDS ── -->
+                        <div id="customerFields" style="display:none;">
+                            <div class="section-divider mb-3">
+                                <span><i class="fas fa-user me-1"></i>Personal Info</span>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">First Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="John">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Last Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Doe">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Phone <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    <input type="tel" class="form-control" id="customer_phone" name="phone"
+                                           placeholder="10-digit mobile number" maxlength="10">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── SELLER FIELDS ── -->
+                        <div id="sellerFields" style="display:none;">
+                            <div class="section-divider mb-3">
+                                <span><i class="fas fa-store me-1"></i>Business Info</span>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Business Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="business_name" name="business_name" placeholder="My Shop">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Owner Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="owner_name" name="owner_name" placeholder="Full name">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Phone <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    <input type="tel" class="form-control" id="seller_phone" name="phone"
+                                           placeholder="10-digit mobile number" maxlength="10">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Address <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="address" name="address" rows="2" placeholder="Street address"></textarea>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-semibold">City <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="city" name="city" placeholder="Mumbai">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-semibold">State <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="state" name="state" placeholder="Maharashtra">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-semibold">Pincode <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="pincode" name="pincode"
+                                           placeholder="6-digit" maxlength="6">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">GST Number <span class="text-muted small">(optional)</span></label>
+                                <input type="text" class="form-control" id="gst_number" name="gst_number"
+                                       placeholder="22AAAAA0000A1Z5" maxlength="15">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold mt-2" id="registerBtn">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <small class="text-muted">Already have an account?
+                            <a href="{{ url_for('login') }}" class="fw-semibold">Login here</a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.auth-card { border-radius: 16px; overflow: hidden; }
+.auth-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+.input-group-text { background: var(--card-bg); border-right: none; color: var(--text-muted); }
+.input-group .form-control,
+.input-group .form-select { border-left: none; }
+.input-group:focus-within .input-group-text { border-color: #667eea; }
+
+/* Strength bar */
+.strength-bar-wrap {
+    height: 6px; background: #e9ecef; border-radius: 4px; margin-top: 6px; overflow: hidden;
+}
+.strength-bar {
+    height: 100%; width: 0; border-radius: 4px;
+    transition: width 0.4s ease, background 0.4s ease;
+}
+.strength-text { font-size: 0.78rem; font-weight: 600; }
+
+/* Password rules */
+.password-rules { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.rule {
+    font-size: 0.75rem; padding: 2px 8px; border-radius: 20px;
+    background: #f1f3f5; color: #868e96;
+    transition: all 0.3s;
+}
+.rule.pass { background: #d3f9d8; color: #2f9e44; }
+
+/* Section divider */
+.section-divider {
+    display: flex; align-items: center; gap: 10px; color: var(--text-muted);
+    font-size: 0.85rem; font-weight: 600;
+}
+.section-divider::before, .section-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border-color);
+}
+</style>
+
+<script>
+/* ── Helpers ── */
+function setValid(el) {
+    el.classList.remove('is-invalid'); el.classList.add('is-valid');
+}
+function setInvalid(el, msg) {
+    el.classList.remove('is-valid'); el.classList.add('is-invalid');
+    const fb = el.closest('.input-group, .mb-3')?.querySelector('.invalid-feedback');
+    if (fb) fb.textContent = msg;
+}
+function clearState(el) { el.classList.remove('is-valid','is-invalid'); }
+
+function togglePwd(id, iconId) {
+    const el = document.getElementById(id);
+    const ic = document.getElementById(iconId);
+    el.type = el.type === 'password' ? 'text' : 'password';
+    ic.className = el.type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+}
+
+/* ── Role toggle ── */
+function toggleFields() {
+    const role = document.getElementById('role').value;
+    document.getElementById('customerFields').style.display = role === 'customer' ? 'block' : 'none';
+    document.getElementById('sellerFields').style.display   = role === 'seller'   ? 'block' : 'none';
+}
+
+/* ── Email live validation ── */
+document.getElementById('email').addEventListener('input', function() {
+    if (!this.value.trim()) { clearState(this); return; }
+    /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(this.value.trim())
+        ? setValid(this) : setInvalid(this, 'Enter a valid email (e.g. name@domain.com).');
+});
+
+/* ── Password strength ── */
+function checkStrength(pwd) {
+    const rules = {
+        len:   pwd.length >= 8,
+        upper: /[A-Z]/.test(pwd),
+        num:   /[0-9]/.test(pwd),
+        sym:   /[^A-Za-z0-9]/.test(pwd),
+    };
+    const score = Object.values(rules).filter(Boolean).length;
+
+    // Update rule chips
+    document.getElementById('r-len').className   = 'rule' + (rules.len   ? ' pass' : '');
+    document.getElementById('r-upper').className = 'rule' + (rules.upper ? ' pass' : '');
+    document.getElementById('r-num').className   = 'rule' + (rules.num   ? ' pass' : '');
+    document.getElementById('r-sym').className   = 'rule' + (rules.sym   ? ' pass' : '');
+
+    // Update rule text
+    document.getElementById('r-len').textContent   = (rules.len   ? '✓' : '✗') + ' At least 8 characters';
+    document.getElementById('r-upper').textContent = (rules.upper ? '✓' : '✗') + ' Uppercase letter';
+    document.getElementById('r-num').textContent   = (rules.num   ? '✓' : '✗') + ' Number';
+    document.getElementById('r-sym').textContent   = (rules.sym   ? '✓' : '✗') + ' Special character';
+
+    const bar  = document.getElementById('strengthBar');
+    const text = document.getElementById('strengthText');
+    const levels = [
+        { w:'0%',   bg:'',        label:'',          cls:'' },
+        { w:'25%',  bg:'#fa5252', label:'Weak',       cls:'text-danger' },
+        { w:'50%',  bg:'#fd7e14', label:'Fair',       cls:'text-warning' },
+        { w:'75%',  bg:'#fab005', label:'Good',       cls:'text-info' },
+        { w:'100%', bg:'#40c057', label:'Strong 💪',  cls:'text-success' },
+    ];
+    const l = levels[score];
+    bar.style.width      = l.w;
+    bar.style.background = l.bg;
+    text.textContent     = l.label;
+    text.className       = 'strength-text ' + l.cls;
+
+    return score;
+}
+
+document.getElementById('password').addEventListener('input', function() {
+    if (!this.value) { clearState(this); document.getElementById('strengthBar').style.width='0'; return; }
+    const score = checkStrength(this.value);
+    score >= 2 ? setValid(this) : setInvalid(this, 'Password is too weak.');
+    // Re-check confirm
+    const c = document.getElementById('confirm_password');
+    if (c.value) c.dispatchEvent(new Event('input'));
+});
+
+/* ── Confirm password ── */
+document.getElementById('confirm_password').addEventListener('input', function() {
+    if (!this.value) { clearState(this); return; }
+    const pwd = document.getElementById('password').value;
+    this.value === pwd ? setValid(this) : setInvalid(this, 'Passwords do not match.');
+});
+
+/* ── Phone live validation ── */
+['customer_phone','seller_phone'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g,'');
+        if (!this.value) { clearState(this); return; }
+        /^[6-9]\d{9}$/.test(this.value)
+            ? setValid(this) : setInvalid(this, 'Enter a valid 10-digit Indian mobile number.');
+    });
+});
+
+/* ── Pincode ── */
+document.getElementById('pincode').addEventListener('input', function() {
+    this.value = this.value.replace(/\D/g,'');
+    if (!this.value) { clearState(this); return; }
+    /^\d{6}$/.test(this.value) ? setValid(this) : setInvalid(this, 'Pincode must be 6 digits.');
+});
+
+/* ── GST (optional but format check) ── */
+document.getElementById('gst_number').addEventListener('input', function() {
+    if (!this.value) { clearState(this); return; }
+    /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(this.value.toUpperCase())
+        ? setValid(this) : setInvalid(this, 'Invalid GST format (e.g. 22AAAAA0000A1Z5).');
+});
+
+/* ── Submit validation ── */
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    let ok = true;
+    const role = document.getElementById('role').value;
+
+    // Role
+    if (!role) { setInvalid(document.getElementById('role'), 'Please select a role.'); ok = false; }
+
+    // Email
+    const email = document.getElementById('email');
+    if (!email.value.trim()) {
+        setInvalid(email, 'Email is required.'); ok = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim())) {
+        setInvalid(email, 'Enter a valid email address.'); ok = false;
+    }
+
+    // Password
+    const pwd = document.getElementById('password');
+    if (!pwd.value) {
+        setInvalid(pwd, 'Password is required.'); ok = false;
+    } else if (checkStrength(pwd.value) < 2) {
+        setInvalid(pwd, 'Password is too weak. Add uppercase, numbers or symbols.'); ok = false;
+    }
+
+    // Confirm
+    const cpwd = document.getElementById('confirm_password');
+    if (!cpwd.value) {
+        setInvalid(cpwd, 'Please confirm your password.'); ok = false;
+    } else if (cpwd.value !== pwd.value) {
+        setInvalid(cpwd, 'Passwords do not match.'); ok = false;
+    }
+
+    // Customer fields
+    if (role === 'customer') {
+        const fn = document.getElementById('first_name');
+        const ln = document.getElementById('last_name');
+        const ph = document.getElementById('customer_phone');
+        if (!fn.value.trim()) { setInvalid(fn, 'First name is required.'); ok = false; }
+        if (!ln.value.trim()) { setInvalid(ln, 'Last name is required.'); ok = false; }
+        if (!ph.value || !/^[6-9]\d{9}$/.test(ph.value)) {
+            setInvalid(ph, 'Enter a valid 10-digit mobile number.'); ok = false;
+        }
+    }
+
+    // Seller fields
+    if (role === 'seller') {
+        const fields = [
+            ['business_name', 'Business name is required.'],
+            ['owner_name',    'Owner name is required.'],
+            ['address',       'Address is required.'],
+            ['city',          'City is required.'],
+            ['state',         'State is required.'],
+        ];
+        fields.forEach(([id, msg]) => {
+            const el = document.getElementById(id);
+            if (!el.value.trim()) { setInvalid(el, msg); ok = false; }
+        });
+        const ph = document.getElementById('seller_phone');
+        if (!ph.value || !/^[6-9]\d{9}$/.test(ph.value)) {
+            setInvalid(ph, 'Enter a valid 10-digit mobile number.'); ok = false;
+        }
+        const pin = document.getElementById('pincode');
+        if (!pin.value || !/^\d{6}$/.test(pin.value)) {
+            setInvalid(pin, 'Pincode must be 6 digits.'); ok = false;
+        }
+    }
+
+    if (!ok) {
+        e.preventDefault();
+        // Scroll to first error
+        const first = document.querySelector('.is-invalid');
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
+
+    const btn = document.getElementById('registerBtn');
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating account...';
+    btn.disabled = true;
+});
+</script>
+{% endblock %}

@@ -1,0 +1,385 @@
+/* ============================================
+   SOCIAL PROOF & FOMO STYLES
+   ============================================ */
+
+/* Social Proof Notifications */
+.social-proof-container {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    z-index: 9998;
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: all 0.5s ease;
+}
+
+.social-proof-container.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.social-proof-notification {
+    background: white;
+    border-radius: 15px;
+    padding: 15px 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 350px;
+    max-width: 400px;
+    border-left: 4px solid #10b981;
+}
+
+.notification-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-message {
+    font-size: 14px;
+    line-height: 1.4;
+    margin-bottom: 4px;
+    color: #1f2937;
+}
+
+.notification-message strong {
+    color: #1E40AF;
+    font-weight: 600;
+}
+
+.notification-time {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.3s ease;
+}
+
+.notification-close:hover {
+    color: #1f2937;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Stock Badge */
+.stock-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(135deg, #ff0844, #ffb199);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    animation: badgePulse 2s infinite;
+}
+
+.stock-badge i {
+    animation: fireFlicker 1s infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(255, 8, 68, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(255, 8, 68, 0);
+    }
+}
+
+@keyframes fireFlicker {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+/* Live Viewers Badge */
+.live-viewers-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #1E40AF, #3B82F6);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+    margin-bottom: 15px;
+}
+
+.live-indicator-pulse {
+    width: 10px;
+    height: 10px;
+    background: #00ff00;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.3);
+    }
+}
+
+/* Recently Viewed Products */
+.recently-viewed-card {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.recently-viewed-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.recently-viewed-card img {
+    border-radius: 8px;
+    margin-bottom: 10px;
+    max-height: 150px;
+    object-fit: cover;
+}
+
+.recently-viewed-card h6 {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #1f2937;
+}
+
+.recently-viewed-card .price {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1E40AF;
+    margin-bottom: 10px;
+}
+
+/* Deal Countdown */
+.deal-countdown {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #ff0844, #ffb199);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(255, 8, 68, 0.3);
+    justify-content: center;
+}
+
+.countdown-item {
+    text-align: center;
+}
+
+.countdown-value {
+    display: block;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.countdown-label {
+    display: block;
+    font-size: 11px;
+    margin-top: 4px;
+    opacity: 0.9;
+    text-transform: uppercase;
+}
+
+.countdown-separator {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.deal-expired {
+    color: #ef4444;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+/* Urgency Indicators */
+.urgency-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #fef3c7;
+    color: #92400e;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid #fbbf24;
+}
+
+.urgency-badge.high {
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #ef4444;
+}
+
+.urgency-badge i {
+    animation: urgencyBlink 1s infinite;
+}
+
+@keyframes urgencyBlink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+
+/* Trending Badge */
+.trending-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    z-index: 10;
+    animation: trendingPulse 2s infinite;
+}
+
+@keyframes trendingPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Social Proof Stats */
+.social-proof-stats {
+    display: flex;
+    gap: 20px;
+    padding: 15px;
+    background: #f9fafb;
+    border-radius: 12px;
+    margin: 15px 0;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.stat-item i {
+    color: #1E40AF;
+    font-size: 16px;
+}
+
+.stat-item strong {
+    color: #1f2937;
+    font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .social-proof-container {
+        left: 10px;
+        bottom: 80px;
+    }
+    
+    .social-proof-notification {
+        min-width: 300px;
+        max-width: calc(100vw - 20px);
+        padding: 12px 15px;
+    }
+    
+    .notification-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .notification-message {
+        font-size: 13px;
+    }
+    
+    .deal-countdown {
+        padding: 12px 20px;
+        gap: 8px;
+    }
+    
+    .countdown-value {
+        font-size: 22px;
+    }
+    
+    .countdown-label {
+        font-size: 10px;
+    }
+}
+
+/* Dark Mode Support */
+body.dark-mode .social-proof-notification {
+    background: #1f2937;
+    border-left-color: #10b981;
+}
+
+body.dark-mode .notification-message {
+    color: #f3f4f6;
+}
+
+body.dark-mode .notification-message strong {
+    color: #60A5FA;
+}
+
+body.dark-mode .recently-viewed-card {
+    background: #1f2937;
+    color: #f3f4f6;
+}
+
+body.dark-mode .recently-viewed-card h6 {
+    color: #f3f4f6;
+}

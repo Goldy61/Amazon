@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}My Deliveries - ShopHub{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4"><i class="fas fa-list"></i> My Deliveries</h2>
+
+    <div class="card">
+        <div class="card-body">
+            {% if orders %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Order #</th>
+                            <th>Customer</th>
+                            <th>Address</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td><strong>{{ order.order_number }}</strong></td>
+                            <td>
+                                {{ order.first_name }} {{ order.last_name }}<br>
+                                <small class="text-muted">{{ order.customer_phone }}</small>
+                            </td>
+                            <td>
+                                <small>
+                                    {{ order.shipping_address.city }}, {{ order.shipping_address.state }}
+                                </small>
+                            </td>
+                            <td>₹{{ "%.2f"|format(order.final_amount) }}</td>
+                            <td>
+                                {% if order.status == 'shipped' %}
+                                <span class="badge bg-info">Shipped</span>
+                                {% elif order.status == 'out_for_delivery' %}
+                                <span class="badge bg-warning">Out for Delivery</span>
+                                {% elif order.status == 'delivered' %}
+                                <span class="badge bg-success">Delivered</span>
+                                {% else %}
+                                <span class="badge bg-secondary">{{ order.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <small>{{ order.created_at.strftime('%d %b %Y') }}</small>
+                                {% if order.delivered_at %}
+                                <br><small class="text-success">Delivered: {{ order.delivered_at.strftime('%d %b %Y') }}</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if order.status in ['shipped', 'out_for_delivery'] %}
+                                <a href="{{ url_for('verify_delivery', order_id=order.id) }}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-check"></i> Verify
+                                </a>
+                                {% else %}
+                                <span class="text-muted">Completed</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No deliveries found</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

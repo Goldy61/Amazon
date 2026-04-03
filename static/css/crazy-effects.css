@@ -1,0 +1,514 @@
+/* 🎨 CRAZY MODERN EFFECTS STYLES */
+
+/* ============================================
+   1. CURSOR TRAIL EFFECT
+   ============================================ */
+.cursor-dot {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: linear-gradient(135deg, #1E40AF, #3B82F6);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    box-shadow: 0 0 10px rgba(30, 64, 175, 0.5);
+}
+
+/* ============================================
+   2. FLOATING ACTION BUTTON (FAB)
+   ============================================ */
+.fab-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+}
+
+.fab-main {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1E40AF, #3B82F6);
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(30, 64, 175, 0.4);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fab-main:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 30px rgba(30, 64, 175, 0.6);
+}
+
+.fab-options {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.fab-options.active {
+    opacity: 1;
+    pointer-events: all;
+    bottom: 80px;
+}
+
+.fab-option {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #1E40AF;
+    color: #1E40AF;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fabSlideIn 0.3s ease forwards;
+}
+
+.fab-option:hover {
+    background: linear-gradient(135deg, #1E40AF, #3B82F6);
+    color: white;
+    transform: scale(1.1);
+}
+
+@keyframes fabSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   3. LIVE VISITOR COUNTER
+   ============================================ */
+.live-counter {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: linear-gradient(135deg, #1E40AF, #3B82F6);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 8px 20px rgba(30, 64, 175, 0.3);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: slideInRight 0.5s ease;
+}
+
+.live-indicator-dot {
+    width: 8px;
+    height: 8px;
+    background: #00ff00;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ============================================
+   4. FLASH SALE TIMER
+   ============================================ */
+.flash-sale-timer {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #ff0844, #ffb199);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(255, 8, 68, 0.4);
+    z-index: 10;
+    animation: timerPulse 2s infinite;
+}
+
+.timer-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: 600;
+}
+
+.timer-digits {
+    display: flex;
+    gap: 10px;
+}
+
+.timer-box {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 60px;
+}
+
+.timer-box span {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.timer-box small {
+    display: block;
+    font-size: 10px;
+    margin-top: 4px;
+    opacity: 0.9;
+}
+
+@keyframes timerPulse {
+    0%, 100% {
+        box-shadow: 0 10px 30px rgba(255, 8, 68, 0.4);
+    }
+    50% {
+        box-shadow: 0 10px 40px rgba(255, 8, 68, 0.7);
+    }
+}
+
+/* ============================================
+   5. CONFETTI PARTICLES
+   ============================================ */
+.confetti-particle {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    animation: confettiFall 3s linear forwards;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+@keyframes confettiFall {
+    to {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* ============================================
+   6. QUICK VIEW MODAL
+   ============================================ */
+.quick-view-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.quick-view-modal.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.quick-view-content {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 900px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: modalSlideUp 0.3s ease;
+}
+
+.quick-view-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.quick-view-close:hover {
+    background: #1E40AF;
+    color: white;
+    transform: rotate(90deg);
+}
+
+@keyframes modalSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   7. ENHANCED PRODUCT CARDS
+   ============================================ */
+.modern-product-card {
+    transition: all 0.3s ease;
+    transform-style: preserve-3d;
+}
+
+.modern-product-card:hover {
+    z-index: 10;
+}
+
+.modern-product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.1), rgba(59, 130, 246, 0.1));
+    border-radius: 15px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.modern-product-card:hover::before {
+    opacity: 1;
+}
+
+/* ============================================
+   8. ANIMATED BADGES
+   ============================================ */
+.product-badge {
+    animation: badgeBounce 2s infinite;
+}
+
+@keyframes badgeBounce {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* ============================================
+   9. GLOWING BUTTONS
+   ============================================ */
+.btn-hero-primary,
+.btn-add-cart,
+.btn-buy-now {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-hero-primary::before,
+.btn-add-cart::before,
+.btn-buy-now::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-hero-primary:hover::before,
+.btn-add-cart:hover::before,
+.btn-buy-now:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* ============================================
+   10. SMOOTH SCROLL ANIMATIONS
+   ============================================ */
+.feature-card,
+.testimonial-card {
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.testimonial-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   11. LOADING SKELETON SHIMMER
+   ============================================ */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* ============================================
+   12. NOTIFICATION TOAST
+   ============================================ */
+.toast-notification {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    animation: toastSlideIn 0.3s ease;
+    max-width: 350px;
+}
+
+.toast-notification.success {
+    border-left: 4px solid #10b981;
+}
+
+.toast-notification.error {
+    border-left: 4px solid #ef4444;
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ============================================
+   13. PARALLAX EFFECT
+   ============================================ */
+.parallax-section {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* ============================================
+   14. RESPONSIVE ADJUSTMENTS
+   ============================================ */
+@media (max-width: 768px) {
+    .fab-container {
+        bottom: 20px;
+        right: 20px;
+    }
+    
+    .fab-main {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+    
+    .fab-option {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+    
+    .live-counter {
+        top: 70px;
+        right: 10px;
+        font-size: 12px;
+        padding: 8px 15px;
+    }
+    
+    .flash-sale-timer {
+        top: 10px;
+        padding: 10px 20px;
+        font-size: 12px;
+    }
+    
+    .timer-box {
+        min-width: 50px;
+        padding: 6px 8px;
+    }
+    
+    .timer-box span {
+        font-size: 18px;
+    }
+    
+    .quick-view-content {
+        padding: 20px;
+        width: 95%;
+    }
+}
+
+/* ============================================
+   15. DARK MODE SUPPORT
+   ============================================ */
+body.dark-mode .fab-option {
+    background: #1f2937;
+    border-color: #3B82F6;
+    color: #3B82F6;
+}
+
+body.dark-mode .quick-view-content {
+    background: #1f2937;
+    color: white;
+}
+
+body.dark-mode .toast-notification {
+    background: #1f2937;
+    color: white;
+}

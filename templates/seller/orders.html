@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}My Orders - Seller Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2">
+            <div class="sidebar">
+                <h5 class="mb-3">Seller Panel</h5>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="{{ url_for('seller_dashboard') }}">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a class="nav-link" href="{{ url_for('seller_products') }}">
+                        <i class="fas fa-box"></i> Products
+                    </a>
+                    <a class="nav-link" href="{{ url_for('add_product') }}">
+                        <i class="fas fa-plus"></i> Add Product
+                    </a>
+                    <a class="nav-link active" href="{{ url_for('seller_orders') }}">
+                        <i class="fas fa-shopping-bag"></i> Orders
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>My Orders</h2>
+                <span class="text-muted">{{ orders|length }} orders</span>
+            </div>
+
+            {% if orders %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Product</th>
+                                    <th>Customer</th>
+                                    <th>Phone</th>
+                                    <th>Quantity</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td>{{ order.order_number }}</td>
+                                    <td>
+                                        <strong>{{ order.product_name }}</strong>
+                                        <br><small class="text-muted">{{ order.product_name[:30] }}{% if order.product_name|length > 30 %}...{% endif %}</small>
+                                    </td>
+                                    <td>{{ order.customer_name|replace('"', '') }}</td>
+                                    <td>{{ order.customer_phone|replace('"', '') or 'Not provided' }}</td>
+                                    <td>{{ order.quantity }}</td>
+                                    <td>₹{{ "%.2f"|format(order.total) }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'warning' if order.status == 'pending' else 'info' if order.status == 'confirmed' else 'primary' if order.status == 'shipped' else 'success' if order.status == 'delivered' else 'danger' }}">
+                                            {{ order.status.title() }}
+                                        </span>
+                                    </td>
+                                    <td>{{ order.order_date.strftime('%d %b %Y') }}</td>
+                                    <td>
+                                        {% if order.status in ['pending', 'confirmed', 'shipped'] %}
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-primary dropdown-toggle" 
+                                                    data-bs-toggle="dropdown">
+                                                Update Status
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                {% if order.status == 'pending' %}
+                                                <li>
+                                                    <form method="POST" action="{{ url_for('update_order_status') }}" class="d-inline">
+                                                        <input type="hidden" name="order_item_id" value="{{ order.id }}">
+                                                        <input type="hidden" name="status" value="confirmed">
+                                                        <button type="submit" class="dropdown-item">
+                                                            <i class="fas fa-check text-success"></i> Confirm Order
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                                {% endif %}
+                                                
+                                                {% if order.status in ['pending', 'confirmed'] %}
+                                                <li>
+                                                    <form method="POST" action="{{ url_for('update_order_status') }}" class="d-inline">
+                                                        <input type="hidden" name="order_item_id" value="{{ order.id }}">
+                                                        <input type="hidden" name="status" value="shipped">
+                                                        <button type="submit" class="dropdown-item">
+                                                            <i class="fas fa-shipping-fast text-primary"></i> Mark as Shipped
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                                {% endif %}
+                                                
+                                                {% if order.status == 'shipped' %}
+                                                <li>
+                                                    <form method="POST" action="{{ url_for('update_order_status') }}" class="d-inline">
+                                                        <input type="hidden" name="order_item_id" value="{{ order.id }}">
+                                                        <input type="hidden" name="status" value="delivered">
+                                                        <button type="submit" class="dropdown-item">
+                                                            <i class="fas fa-check-circle text-success"></i> Mark as Delivered
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                                {% endif %}
+                                                
+                                                {% if order.status in ['pending', 'confirmed'] %}
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <form method="POST" action="{{ url_for('update_order_status') }}" class="d-inline">
+                                                        <input type="hidden" name="order_item_id" value="{{ order.id }}">
+                                                        <input type="hidden" name="status" value="cancelled">
+                                                        <button type="submit" class="dropdown-item text-danger"
+                                                                onclick="return confirm('Are you sure you want to cancel this order?')">
+                                                            <i class="fas fa-times"></i> Cancel Order
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                                {% endif %}
+                                            </ul>
+                                        </div>
+                                        {% else %}
+                                        <span class="text-muted">No actions</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-shopping-bag fa-5x text-muted mb-4"></i>
+                <h4>No orders yet</h4>
+                <p class="text-muted mb-4">Orders will appear here when customers purchase your products</p>
+                <a href="{{ url_for('seller_products') }}" class="btn btn-primary">
+                    <i class="fas fa-box"></i> Manage Products
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

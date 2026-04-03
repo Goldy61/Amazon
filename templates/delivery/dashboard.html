@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Delivery Dashboard - ShopHub{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2><i class="fas fa-shipping-fast"></i> Delivery Dashboard</h2>
+            <p class="text-muted">Welcome, {{ delivery_person.full_name }}</p>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Today's Deliveries</h6>
+                            <h2 class="mb-0">{{ today_deliveries }}</h2>
+                        </div>
+                        <div class="stat-icon bg-primary">
+                            <i class="fas fa-box"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Pending Deliveries</h6>
+                            <h2 class="mb-0">{{ assigned_orders|length }}</h2>
+                        </div>
+                        <div class="stat-icon bg-warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Total Deliveries</h6>
+                            <h2 class="mb-0">{{ total_deliveries }}</h2>
+                        </div>
+                        <div class="stat-icon bg-success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assigned Orders -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-list"></i> Assigned Orders</h5>
+        </div>
+        <div class="card-body">
+            {% if assigned_orders %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Order #</th>
+                            <th>Customer</th>
+                            <th>Address</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>OTP</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in assigned_orders %}
+                        <tr>
+                            <td><strong>{{ order.order_number }}</strong></td>
+                            <td>
+                                {{ order.first_name }} {{ order.last_name }}<br>
+                                <small class="text-muted">
+                                    <i class="fas fa-phone"></i> {{ order.customer_phone }}
+                                </small>
+                            </td>
+                            <td>
+                                <small>
+                                    {{ order.shipping_address.address }}<br>
+                                    {{ order.shipping_address.city }}, {{ order.shipping_address.state }} - {{ order.shipping_address.pincode }}
+                                </small>
+                            </td>
+                            <td><strong>₹{{ "%.2f"|format(order.final_amount) }}</strong></td>
+                            <td>
+                                {% if order.status == 'shipped' %}
+                                <span class="badge bg-info">Shipped</span>
+                                {% elif order.status == 'out_for_delivery' %}
+                                <span class="badge bg-warning">Out for Delivery</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if order.delivery_otp %}
+                                <code class="otp-code">{{ order.delivery_otp }}</code>
+                                {% else %}
+                                <button class="btn btn-sm btn-outline-primary" onclick="generateOTP({{ order.id }})">
+                                    <i class="fas fa-key"></i> Generate
+                                </button>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('verify_delivery', order_id=order.id) }}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-check"></i> Verify
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No orders assigned yet</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function generateOTP(orderId) {
+    if (!confirm('Generate OTP for this delivery?')) return;
+    
+    fetch(`/delivery/generate_otp/${orderId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(`OTP Generated: ${data.otp}\nShare this with the customer for delivery verification.`);
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to generate OTP');
+    });
+}
+</script>
+
+<style>
+.stat-card {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+}
+
+.otp-code {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+</style>
+{% endblock %}

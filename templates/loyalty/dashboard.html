@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+{% block title %}Loyalty Rewards - My Points{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <!-- Header -->
+    <div class="loyalty-hero mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-7">
+                <h2><i class="fas fa-star text-warning"></i> Loyalty Rewards</h2>
+                <p class="mb-0 opacity-75">Earn points on every purchase and unlock exclusive rewards!</p>
+            </div>
+            <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                <a href="{{ url_for('referral_page') }}" class="btn btn-warning">
+                    <i class="fas fa-user-plus"></i> Refer & Earn ₹{{ (100 * 0.10)|int }}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Points & Tier Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="loyalty-stat-card text-center p-3">
+                <div class="stat-icon mb-2"><i class="fas fa-coins text-warning fa-2x"></i></div>
+                <div class="stat-value">{{ loyalty.points }}</div>
+                <div class="stat-label">Available Points</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="loyalty-stat-card text-center p-3">
+                <div class="stat-icon mb-2">
+                    {% if loyalty.tier == 'Platinum' %}<i class="fas fa-gem text-info fa-2x"></i>
+                    {% elif loyalty.tier == 'Gold' %}<i class="fas fa-trophy text-warning fa-2x"></i>
+                    {% elif loyalty.tier == 'Silver' %}<i class="fas fa-medal" style="color:#aaa; font-size:2rem;"></i>
+                    {% else %}<i class="fas fa-award text-danger fa-2x"></i>{% endif %}
+                </div>
+                <div class="stat-value">{{ loyalty.tier }}</div>
+                <div class="stat-label">Current Tier</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="loyalty-stat-card text-center p-3">
+                <div class="stat-icon mb-2"><i class="fas fa-chart-line text-success fa-2x"></i></div>
+                <div class="stat-value">{{ loyalty.total_earned }}</div>
+                <div class="stat-label">Total Earned</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="loyalty-stat-card text-center p-3">
+                <div class="stat-icon mb-2"><i class="fas fa-gift text-primary fa-2x"></i></div>
+                <div class="stat-value">₹{{ "%.0f"|format(loyalty.points * 0.10) }}</div>
+                <div class="stat-label">Points Value</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+
+            <!-- Tier Progress -->
+            <div class="card mb-4">
+                <div class="card-header"><h6 class="mb-0"><i class="fas fa-layer-group"></i> Tier Progress</h6></div>
+                <div class="card-body">
+                    <div class="tier-progress-row d-flex justify-content-between mb-3">
+                        {% for tier_name, threshold in tier_thresholds.items() %}
+                        <div class="tier-step text-center {% if loyalty.tier == tier_name %}active{% endif %}">
+                            {% if tier_name == 'Platinum' %}<i class="fas fa-gem"></i>
+                            {% elif tier_name == 'Gold' %}<i class="fas fa-trophy"></i>
+                            {% elif tier_name == 'Silver' %}<i class="fas fa-medal"></i>
+                            {% else %}<i class="fas fa-award"></i>{% endif %}
+                            <div class="tier-name">{{ tier_name }}</div>
+                            <div class="tier-pts small">{{ threshold }} pts</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if next_tier %}
+                    <div class="mb-1 d-flex justify-content-between">
+                        <small>Progress to {{ next_tier }}</small>
+                        <small><strong>{{ points_to_next }} pts needed</strong></small>
+                    </div>
+                    <div class="progress" style="height:10px;">
+                        {% set pct = ((loyalty.total_earned - tier_thresholds[loyalty.tier]) / (tier_thresholds[next_tier] - tier_thresholds[loyalty.tier]) * 100)|int %}
+                        <div class="progress-bar bg-warning" style="width: {{ [pct, 100]|min }}%"></div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-success mb-0 py-2">
+                        <i class="fas fa-crown"></i> You've reached the highest tier — <strong>Platinum</strong>!
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Redeem Points -->
+            <div class="card mb-4">
+                <div class="card-header"><h6 class="mb-0"><i class="fas fa-exchange-alt"></i> Redeem Points</h6></div>
+                <div class="card-body">
+                    <p class="text-muted small mb-3">100 points = ₹10 discount coupon. Minimum redemption: 100 points.</p>
+                    {% if loyalty.points >= 100 %}
+                    <form method="POST" action="{{ url_for('redeem_points') }}" class="row g-2 align-items-end">
+                        <div class="col-sm-6">
+                            <label class="form-label small">Points to Redeem</label>
+                            <input type="number" name="points" class="form-control"
+                                   min="100" max="{{ loyalty.points }}" step="100"
+                                   value="100" required>
+                            <div class="form-text">Max: {{ loyalty.points }} pts = ₹{{ "%.0f"|format(loyalty.points * 0.10) }}</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <button type="submit" class="btn btn-warning w-100">
+                                <i class="fas fa-ticket-alt"></i> Get Coupon
+                            </button>
+                        </div>
+                    </form>
+                    {% else %}
+                    <div class="alert alert-info mb-0 py-2">
+                        <i class="fas fa-info-circle"></i>
+                        You need at least <strong>100 points</strong> to redeem.
+                        You have <strong>{{ loyalty.points }}</strong> points.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Transaction History -->
+            <div class="card">
+                <div class="card-header"><h6 class="mb-0"><i class="fas fa-history"></i> Points History</h6></div>
+                <div class="card-body p-0">
+                    {% if transactions %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Points</th>
+                                    <th>Type</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tx in transactions %}
+                                <tr>
+                                    <td>{{ tx.description }}</td>
+                                    <td>
+                                        <span class="fw-bold {% if tx.type == 'earned' %}text-success{% else %}text-danger{% endif %}">
+                                            {% if tx.type == 'earned' %}+{% endif %}{{ tx.points }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge {% if tx.type == 'earned' %}bg-success{% else %}bg-danger{% endif %}">
+                                            {{ tx.type|capitalize }}
+                                        </span>
+                                    </td>
+                                    <td class="text-muted small">{{ tx.created_at.strftime('%d %b %Y') if tx.created_at else '-' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4 text-muted">
+                        <i class="fas fa-coins fa-2x mb-2"></i>
+                        <p>No transactions yet. Start shopping to earn points!</p>
+                        <a href="{{ url_for('products') }}" class="btn btn-primary btn-sm">Shop Now</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+
+            <!-- How to Earn -->
+            <div class="card mb-4">
+                <div class="card-header"><h6 class="mb-0"><i class="fas fa-lightbulb text-warning"></i> How to Earn</h6></div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="d-flex align-items-center mb-3">
+                            <span class="earn-icon me-3"><i class="fas fa-shopping-bag text-primary"></i></span>
+                            <div><strong>1 point</strong> per ₹1 spent</div>
+                        </li>
+                        <li class="d-flex align-items-center mb-3">
+                            <span class="earn-icon me-3"><i class="fas fa-user-plus text-success"></i></span>
+                            <div><strong>100 points</strong> per referral</div>
+                        </li>
+                        <li class="d-flex align-items-center mb-3">
+                            <span class="earn-icon me-3"><i class="fas fa-star text-warning"></i></span>
+                            <div><strong>50 points</strong> for a review</div>
+                        </li>
+                        <li class="d-flex align-items-center">
+                            <span class="earn-icon me-3"><i class="fas fa-birthday-cake text-danger"></i></span>
+                            <div><strong>200 points</strong> on birthday</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tier Benefits -->
+            <div class="card mb-4">
+                <div class="card-header"><h6 class="mb-0"><i class="fas fa-crown text-warning"></i> Tier Benefits</h6></div>
+                <div class="card-body p-0">
+                    <table class="table table-sm mb-0">
+                        <thead class="table-light">
+                            <tr><th>Tier</th><th>Points</th><th>Bonus</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr class="{% if loyalty.tier == 'Bronze' %}table-warning{% endif %}">
+                                <td><i class="fas fa-award text-danger"></i> Bronze</td>
+                                <td>0+</td><td>—</td>
+                            </tr>
+                            <tr class="{% if loyalty.tier == 'Silver' %}table-warning{% endif %}">
+                                <td><i class="fas fa-medal" style="color:#aaa"></i> Silver</td>
+                                <td>1,000+</td><td>+100 pts</td>
+                            </tr>
+                            <tr class="{% if loyalty.tier == 'Gold' %}table-warning{% endif %}">
+                                <td><i class="fas fa-trophy text-warning"></i> Gold</td>
+                                <td>5,000+</td><td>+250 pts</td>
+                            </tr>
+                            <tr class="{% if loyalty.tier == 'Platinum' %}table-warning{% endif %}">
+                                <td><i class="fas fa-gem text-info"></i> Platinum</td>
+                                <td>10,000+</td><td>+500 pts</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Referral CTA -->
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-share-alt fa-2x text-primary mb-2"></i>
+                    <h6>Your Referral Code</h6>
+                    <div class="referral-code-box mb-3">{{ referral_code or 'N/A' }}</div>
+                    <a href="{{ url_for('referral_page') }}" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="fas fa-user-plus"></i> Invite Friends
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+.loyalty-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 24px;
+    border-radius: 12px;
+}
+.loyalty-stat-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 2px 12px var(--shadow-color);
+    border: 1px solid var(--border-color);
+}
+.stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+.tier-step {
+    flex: 1;
+    padding: 8px 4px;
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+.tier-step.active {
+    background: rgba(255, 193, 7, 0.15);
+    color: #f59e0b;
+    font-weight: 700;
+}
+.tier-name { font-weight: 600; margin-top: 4px; }
+.tier-pts { opacity: 0.7; }
+.earn-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--bg-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.referral-code-box {
+    background: var(--bg-color);
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--text-color);
+}
+</style>
+{% endblock %}

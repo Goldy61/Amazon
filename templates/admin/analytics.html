@@ -1,0 +1,485 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2">
+            <div class="sidebar">
+                <h5 class="mb-3">Admin Panel</h5>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a class="nav-link" href="{{ url_for('admin_sellers') }}">
+                        <i class="fas fa-store"></i> Sellers
+                    </a>
+                    <a class="nav-link" href="{{ url_for('admin_customers') }}">
+                        <i class="fas fa-users"></i> Customers
+                    </a>
+                    <a class="nav-link" href="{{ url_for('admin_categories') }}">
+                        <i class="fas fa-tags"></i> Categories
+                    </a>
+                    <a class="nav-link" href="{{ url_for('admin_orders') }}">
+                        <i class="fas fa-shopping-bag"></i> Orders
+                    </a>
+                    <a class="nav-link active" href="{{ url_for('admin_analytics') }}">
+                        <i class="fas fa-chart-bar"></i> Analytics
+                    </a>
+                    <a class="nav-link" href="{{ url_for('chat_page') }}">
+                        <i class="fas fa-robot"></i> AI Chat
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-chart-line"></i> Analytics Dashboard</h2>
+                
+                <!-- Time Period Filter -->
+                <div class="btn-group" role="group">
+                    <a href="{{ url_for('admin_analytics', period='daily') }}" 
+                       class="btn btn-sm btn-{{ 'primary' if period == 'daily' else 'outline-primary' }}">
+                        Daily
+                    </a>
+                    <a href="{{ url_for('admin_analytics', period='weekly') }}" 
+                       class="btn btn-sm btn-{{ 'primary' if period == 'weekly' else 'outline-primary' }}">
+                        Weekly
+                    </a>
+                    <a href="{{ url_for('admin_analytics', period='monthly') }}" 
+                       class="btn btn-sm btn-{{ 'primary' if period == 'monthly' else 'outline-primary' }}">
+                        Monthly
+                    </a>
+                    <a href="{{ url_for('admin_analytics', period='yearly') }}" 
+                       class="btn btn-sm btn-{{ 'primary' if period == 'yearly' else 'outline-primary' }}">
+                        Yearly
+                    </a>
+                    <a href="{{ url_for('admin_analytics', period='all') }}" 
+                       class="btn btn-sm btn-{{ 'primary' if period == 'all' else 'outline-primary' }}">
+                        All Time
+                    </a>
+                </div>
+            </div>
+
+            <!-- Overview Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card dashboard-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-shopping-cart fa-2x text-primary mb-2"></i>
+                            <h3>{{ overview['total_orders'] or 0 }}</h3>
+                            <small class="text-muted">Total Orders</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card dashboard-card success">
+                        <div class="card-body text-center">
+                            <i class="fas fa-rupee-sign fa-2x text-success mb-2"></i>
+                            <h3>₹{{ "%.0f"|format(overview['total_revenue'] or 0) }}</h3>
+                            <small class="text-muted">Total Revenue</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card dashboard-card info">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users fa-2x text-info mb-2"></i>
+                            <h3>{{ overview['total_customers'] or 0 }}</h3>
+                            <small class="text-muted">Customers</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card dashboard-card warning">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-2x text-warning mb-2"></i>
+                            <h3>₹{{ "%.0f"|format(overview['avg_order_value'] or 0) }}</h3>
+                            <small class="text-muted">Avg Order Value</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sales Charts -->
+            <div class="row mb-4">
+                <!-- Daily Sales Chart -->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-calendar-day"></i> Daily Sales (Last 30 Days)</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="dailySalesChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monthly Sales Chart -->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Monthly Sales (Last 12 Months)</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="monthlySalesChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category & Product Analysis -->
+            <div class="row mb-4">
+                <!-- Top Categories -->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-tags"></i> Top Categories</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="categoriesChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Status Distribution -->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Order Status Distribution</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="statusChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Geographic Analysis -->
+            <div class="row mb-4">
+                <!-- Top Cities -->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-map-marker-alt"></i> Top Cities by Orders</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="citiesChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top States -->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-globe"></i> Top States by Orders</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="statesChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Products Table -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-star"></i> Top Selling Products</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Sales Count</th>
+                                            <th>Quantity Sold</th>
+                                            <th>Revenue</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for product in top_products %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="{{ product['image_url'] | image_url }}" 
+                                                         class="rounded me-2" 
+                                                         style="width: 40px; height: 40px; object-fit: cover;" 
+                                                         alt="{{ product['name'] }}">
+                                                    <span>{{ product['name'] }}</span>
+                                                </div>
+                                            </td>
+                                            <td>{{ product['sales_count'] }}</td>
+                                            <td>{{ product['total_quantity'] }}</td>
+                                            <td>₹{{ "%.2f"|format(product['revenue']) }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Sellers Table -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-trophy"></i> Top Sellers</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Seller</th>
+                                            <th>Orders</th>
+                                            <th>Revenue</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for seller in top_sellers %}
+                                        <tr>
+                                            <td>{{ seller['business_name'] }}</td>
+                                            <td>{{ seller['orders'] }}</td>
+                                            <td>₹{{ "%.2f"|format(seller['revenue']) }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Geographic Data Tables -->
+            <div class="row mb-4">
+                <!-- Cities Table -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-city"></i> Top Cities</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>City</th>
+                                            <th>State</th>
+                                            <th>Orders</th>
+                                            <th>Revenue</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for city in top_cities %}
+                                        <tr>
+                                            <td>{{ city['city'] or 'N/A' }}</td>
+                                            <td>{{ city['state'] or 'N/A' }}</td>
+                                            <td>{{ city['orders'] }}</td>
+                                            <td>₹{{ "%.0f"|format(city['revenue']) }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- States Table -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-map"></i> Top States</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>State</th>
+                                            <th>Orders</th>
+                                            <th>Revenue</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for state in top_states %}
+                                        <tr>
+                                            <td>{{ state['state'] or 'N/A' }}</td>
+                                            <td>{{ state['orders'] }}</td>
+                                            <td>₹{{ "%.0f"|format(state['revenue']) }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+<script>
+// Daily Sales Chart
+const dailySalesData = {{ daily_sales | tojson }};
+const dailySalesChart = new Chart(document.getElementById('dailySalesChart'), {
+    type: 'line',
+    data: {
+        labels: dailySalesData.map(d => d.date),
+        datasets: [{
+            label: 'Revenue (₹)',
+            data: dailySalesData.map(d => d.revenue),
+            borderColor: '#1E40AF',
+            backgroundColor: 'rgba(30, 64, 175, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: true }
+        },
+        scales: {
+            y: { beginAtZero: true }
+        }
+    }
+});
+
+// Monthly Sales Chart
+const monthlySalesData = {{ monthly_sales | tojson }};
+const monthlySalesChart = new Chart(document.getElementById('monthlySalesChart'), {
+    type: 'bar',
+    data: {
+        labels: monthlySalesData.map(d => d.month_name),
+        datasets: [{
+            label: 'Revenue (₹)',
+            data: monthlySalesData.map(d => d.revenue),
+            backgroundColor: '#3B82F6',
+            borderColor: '#1E40AF',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: true }
+        },
+        scales: {
+            y: { beginAtZero: true }
+        }
+    }
+});
+
+// Categories Chart
+const categoriesData = {{ top_categories | tojson }};
+const categoriesChart = new Chart(document.getElementById('categoriesChart'), {
+    type: 'doughnut',
+    data: {
+        labels: categoriesData.map(c => c.name),
+        datasets: [{
+            data: categoriesData.map(c => c.sales_count),
+            backgroundColor: [
+                '#1E40AF', '#3B82F6', '#60A5FA', '#93C5FD', '#DBEAFE',
+                '#FCD34D', '#FBBF24', '#F59E0B', '#D97706', '#B45309'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { position: 'right' }
+        }
+    }
+});
+
+// Order Status Chart
+const statusData = {{ status_distribution | tojson }};
+const statusChart = new Chart(document.getElementById('statusChart'), {
+    type: 'pie',
+    data: {
+        labels: statusData.map(s => s.status.charAt(0).toUpperCase() + s.status.slice(1)),
+        datasets: [{
+            data: statusData.map(s => s.count),
+            backgroundColor: ['#FCD34D', '#60A5FA', '#A78BFA', '#34D399', '#F87171']
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { position: 'right' }
+        }
+    }
+});
+
+// Cities Chart
+const citiesData = {{ top_cities | tojson }};
+const citiesChart = new Chart(document.getElementById('citiesChart'), {
+    type: 'horizontalBar',
+    data: {
+        labels: citiesData.map(c => c.city || 'N/A'),
+        datasets: [{
+            label: 'Orders',
+            data: citiesData.map(c => c.orders),
+            backgroundColor: '#3B82F6'
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            x: { beginAtZero: true }
+        }
+    }
+});
+
+// States Chart
+const statesData = {{ top_states | tojson }};
+const statesChart = new Chart(document.getElementById('statesChart'), {
+    type: 'horizontalBar',
+    data: {
+        labels: statesData.map(s => s.state || 'N/A'),
+        datasets: [{
+            label: 'Orders',
+            data: statesData.map(s => s.orders),
+            backgroundColor: '#1E40AF'
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            x: { beginAtZero: true }
+        }
+    }
+});
+</script>
+{% endblock %}

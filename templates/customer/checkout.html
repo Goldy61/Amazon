@@ -1,0 +1,386 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - E-Commerce{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Checkout</h2>
+
+    <form method="POST" action="{{ url_for('place_order') }}" id="checkoutForm">
+        <div class="row">
+            <!-- Shipping Information -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Shipping Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="first_name" class="form-label">First Name *</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" 
+                                       value="{{ customer.first_name or '' }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="last_name" class="form-label">Last Name *</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" 
+                                       value="{{ customer.last_name or '' }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number *</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   value="{{ customer.phone or '' }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address *</label>
+                            <textarea class="form-control" id="address" name="address" rows="3" required>{{ customer.address or '' }}</textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="city" class="form-label">City *</label>
+                                <input type="text" class="form-control" id="city" name="city" 
+                                       value="{{ customer.city or '' }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="state" class="form-label">State *</label>
+                                <input type="text" class="form-control" id="state" name="state" 
+                                       value="{{ customer.state or '' }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="pincode" class="form-label">Pincode *</label>
+                            <input type="text" class="form-control" id="pincode" name="pincode" 
+                                   value="{{ customer.pincode or '' }}" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Items -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Order Items</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for item in cart_items %}
+                        <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                            <div class="me-3">
+                                <img src="{{ item.image_url | image_url }}" 
+                                     class="rounded" style="width: 60px; height: 60px; object-fit: cover;" alt="{{ item.name }}">
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">{{ item.name }}</h6>
+                                <p class="text-muted small mb-0">{{ item.business_name }}</p>
+                                <p class="mb-0">Qty: {{ item.quantity }} × ₹{{ "%.2f"|format(item.price) }}</p>
+                            </div>
+                            <div class="text-end">
+                                <strong>₹{{ "%.2f"|format(item.price * item.quantity) }}</strong>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Apply Coupon</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" id="couponCode" placeholder="Enter coupon code" style="text-transform: uppercase;">
+                            <button class="btn btn-primary" type="button" onclick="applyCoupon()">
+                                <i class="fas fa-tag"></i> Apply
+                            </button>
+                        </div>
+                        <div id="couponMessage"></div>
+                        <div id="appliedCoupon" style="display: none;" class="alert alert-success mt-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong id="appliedCouponCode"></strong>
+                                    <br><small id="appliedCouponDesc"></small>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeCoupon()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-link btn-sm p-0" onclick="showAvailableCoupons()">
+                            <i class="fas fa-gift"></i> View available coupons
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal</span>
+                            <span id="subtotal">₹{{ "%.2f"|format(total) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2" id="discountRow" style="display: none !important;">
+                            <span class="text-success">Discount</span>
+                            <span class="text-success" id="discountAmount">-₹0.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Shipping</span>
+                            <span class="text-success">FREE</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tax</span>
+                            <span>₹0.00</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <strong>Total</strong>
+                            <strong id="finalTotal">₹{{ "%.2f"|format(total) }}</strong>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6>Payment Method</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" 
+                                       id="razorpay" value="razorpay" checked>
+                                <label class="form-check-label" for="razorpay">
+                                    <i class="fas fa-credit-card"></i> Razorpay (Cards, UPI, Wallets)
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-lock"></i> Place Order
+                            </button>
+                            <a href="{{ url_for('cart') }}" class="btn btn-outline-secondary">
+                                Back to Cart
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+const cartTotal = {{ total }};
+let appliedDiscount = 0;
+
+function applyCoupon() {
+    const couponCode = document.getElementById('couponCode').value.trim().toUpperCase();
+    const messageDiv = document.getElementById('couponMessage');
+    
+    if (!couponCode) {
+        messageDiv.innerHTML = '<small class="text-danger">Please enter a coupon code</small>';
+        return;
+    }
+    
+    // Show loading
+    messageDiv.innerHTML = '<small class="text-info"><i class="fas fa-spinner fa-spin"></i> Validating...</small>';
+    
+    fetch('/api/validate_coupon', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            coupon_code: couponCode,
+            cart_total: cartTotal
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            messageDiv.innerHTML = '<small class="text-success"><i class="fas fa-check-circle"></i> ' + data.message + '</small>';
+            
+            // Update UI
+            appliedDiscount = data.coupon.discount;
+            document.getElementById('appliedCouponCode').textContent = data.coupon.code;
+            document.getElementById('appliedCouponDesc').textContent = data.coupon.description;
+            document.getElementById('appliedCoupon').style.display = 'block';
+            document.getElementById('couponCode').value = '';
+            document.getElementById('couponCode').disabled = true;
+            
+            // Update totals
+            const discountRow = document.getElementById('discountRow');
+            discountRow.style.display = 'flex';
+            discountRow.classList.add('show');
+            document.getElementById('discountAmount').textContent = '-₹' + appliedDiscount.toFixed(2);
+            document.getElementById('finalTotal').textContent = '₹' + data.coupon.final_amount.toFixed(2);
+            
+            // Clear message after 3 seconds
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 3000);
+        } else {
+            messageDiv.innerHTML = '<small class="text-danger"><i class="fas fa-exclamation-circle"></i> ' + data.message + '</small>';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        messageDiv.innerHTML = '<small class="text-danger">Error applying coupon</small>';
+    });
+}
+
+function removeCoupon() {
+    fetch('/api/remove_coupon', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Reset UI
+        appliedDiscount = 0;
+        document.getElementById('appliedCoupon').style.display = 'none';
+        document.getElementById('couponCode').disabled = false;
+        const discountRow = document.getElementById('discountRow');
+        discountRow.style.display = 'none';
+        discountRow.classList.remove('show');
+        document.getElementById('finalTotal').textContent = '₹' + cartTotal.toFixed(2);
+        document.getElementById('couponMessage').innerHTML = '<small class="text-info">Coupon removed</small>';
+        
+        setTimeout(() => {
+            document.getElementById('couponMessage').innerHTML = '';
+        }, 2000);
+    });
+}
+
+function showAvailableCoupons() {
+    fetch('/api/get_coupons')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.coupons.length > 0) {
+            let couponsHTML = '<div class="modal fade" id="couponsModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">';
+            couponsHTML += '<div class="modal-header"><h5 class="modal-title">Available Coupons</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>';
+            couponsHTML += '<div class="modal-body"><div class="row g-3">';
+            
+            data.coupons.forEach(coupon => {
+                const discountText = coupon.discount_type === 'percentage' 
+                    ? `${coupon.discount_value}% OFF` 
+                    : `₹${coupon.discount_value} OFF`;
+                
+                const maxDiscount = coupon.max_discount_amount 
+                    ? ` (Max ₹${coupon.max_discount_amount})` 
+                    : '';
+                
+                couponsHTML += `
+                    <div class="col-md-6">
+                        <div class="card h-100 coupon-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="coupon-code">${coupon.code}</div>
+                                    <button class="btn btn-sm btn-primary" onclick="applyCouponCode('${coupon.code}')">Apply</button>
+                                </div>
+                                <h6 class="text-primary mb-2">${discountText}${maxDiscount}</h6>
+                                <p class="small mb-2">${coupon.description}</p>
+                                <small class="text-muted">Min order: ₹${coupon.min_order_amount}</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            couponsHTML += '</div></div></div></div></div>';
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('couponsModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body
+            document.body.insertAdjacentHTML('beforeend', couponsHTML);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('couponsModal'));
+            modal.show();
+        } else {
+            alert('No coupons available at the moment');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error fetching coupons');
+    });
+}
+
+function applyCouponCode(code) {
+    document.getElementById('couponCode').value = code;
+    const modal = bootstrap.Modal.getInstance(document.getElementById('couponsModal'));
+    if (modal) {
+        modal.hide();
+    }
+    applyCoupon();
+}
+
+document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+    // Basic form validation
+    const requiredFields = this.querySelectorAll('[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            field.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            field.classList.remove('is-invalid');
+        }
+    });
+    
+    if (!isValid) {
+        e.preventDefault();
+        alert('Please fill in all required fields.');
+    }
+});
+
+// Allow Enter key to apply coupon
+document.getElementById('couponCode').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        applyCoupon();
+    }
+});
+</script>
+
+<style>
+.coupon-card {
+    border: 2px dashed var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.coupon-card:hover {
+    border-color: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.coupon-code {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: 1px;
+}
+
+#discountRow {
+    display: none !important;
+}
+
+#discountRow.show {
+    display: flex !important;
+}
+</style>
+{% endblock %}

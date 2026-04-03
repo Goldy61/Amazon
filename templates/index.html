@@ -1,0 +1,692 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Modern Hero Section with Video Background -->
+<section class="modern-hero-section">
+    <div class="hero-video-container">
+        <!-- Full-screen video background -->
+        <video autoplay muted loop playsinline class="hero-video">
+            <source src="https://cdn.coverr.co/videos/coverr-shopping-in-a-clothing-store-5236/1080p.mp4" type="video/mp4">
+            <source src="https://cdn.coverr.co/videos/coverr-woman-shopping-for-clothes-6874/1080p.mp4" type="video/mp4">
+        </video>
+        <!-- Animated gradient overlay for better text readability -->
+        <div class="hero-overlay"></div>
+        <!-- Animated geometric shapes -->
+        <div class="hero-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+    </div>
+    
+    <div class="hero-content">
+        <div class="container">
+            <div class="row align-items-center min-vh-75">
+                <div class="col-lg-6">
+                    <div class="hero-text" data-aos="fade-right">
+                        <span class="hero-badge">Premium Quality</span>
+                        <h1 class="hero-title">Discover Your Perfect Product</h1>
+                        <p class="hero-description">Shop from thousands of verified sellers offering premium quality products at the best prices</p>
+                        <div class="hero-buttons">
+                            <a href="{{ url_for('products') }}" class="btn btn-hero-primary">
+                                <i class="fas fa-shopping-bag me-2"></i>Start Shopping
+                            </a>
+                            <a href="#featured" class="btn btn-hero-outline">
+                                <i class="fas fa-arrow-down me-2"></i>Explore More
+                            </a>
+                        </div>
+                        
+                        <!-- Trust Indicators -->
+                        <div class="trust-indicators mt-4">
+                            <div class="trust-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Secure Payment</span>
+                            </div>
+                            <div class="trust-item">
+                                <i class="fas fa-truck"></i>
+                                <span>Fast Delivery</span>
+                            </div>
+                            <div class="trust-item">
+                                <i class="fas fa-undo"></i>
+                                <span>Easy Returns</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image-showcase" data-aos="fade-left">
+                        <!-- Auto-rotating Image Carousel -->
+                        <div class="hero-carousel">
+                            <div class="carousel-images">
+                                <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80" 
+                                     alt="Modern Store Interior" class="carousel-img active">
+                                <img src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800&q=80" 
+                                     alt="Shopping Experience" class="carousel-img">
+                                <img src="https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?w=800&q=80" 
+                                     alt="Premium Shopping" class="carousel-img">
+                                <img src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=800&q=80" 
+                                     alt="Fashion Store" class="carousel-img">
+                                <img src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=800&q=80" 
+                                     alt="Retail Shopping" class="carousel-img">
+                            </div>
+                            <!-- Carousel Indicators -->
+                            <div class="carousel-indicators">
+                                <span class="indicator active" data-slide="0"></span>
+                                <span class="indicator" data-slide="1"></span>
+                                <span class="indicator" data-slide="2"></span>
+                                <span class="indicator" data-slide="3"></span>
+                                <span class="indicator" data-slide="4"></span>
+                            </div>
+                        </div>
+                        <div class="floating-card floating-card-1">
+                            <i class="fas fa-star text-warning"></i>
+                            <span>4.9 Rating</span>
+                        </div>
+                        <div class="floating-card floating-card-2">
+                            <i class="fas fa-users text-primary"></i>
+                            <span>10K+ Customers</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <h4>Free Shipping</h4>
+                    <p>On orders over ₹500</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h4>Secure Payment</h4>
+                    <p>100% secure transactions</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h4>24/7 Support</h4>
+                    <p>Dedicated customer service</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <h4>Best Quality</h4>
+                    <p>Premium products only</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products Section -->
+<section id="featured" class="featured-products-section py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Our Collection</span>
+            <h2 class="section-title">Featured Products</h2>
+            <p class="section-description">Handpicked products just for you</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for product in products %}
+            <div class="col-lg-3 col-md-4 col-sm-6" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
+                <div class="modern-product-card">
+                    <div class="product-image-wrapper">
+                        {% if product.image_url %}
+                        <img src="{{ product.image_url | image_url }}" class="product-image" alt="{{ product.name }}">
+                        {% else %}
+                        <img src="{{ '' | image_url }}" class="product-image" alt="{{ product.name }}">
+                        {% endif %}
+                        
+                        {% if product.discount_price %}
+                        <span class="product-badge">Sale</span>
+                        {% endif %}
+                        
+                        <div class="product-overlay">
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-overlay">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="product-info">
+                        <div class="product-category">{{ product.business_name }}</div>
+                        <h5 class="product-name">{{ product.name }}</h5>
+                        
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span>(4.5)</span>
+                        </div>
+                        
+                        <div class="product-price">
+                            {% if product.discount_price %}
+                            <span class="price-current">₹{{ "%.2f"|format(product.discount_price) }}</span>
+                            <span class="price-original">₹{{ "%.2f"|format(product.price) }}</span>
+                            {% else %}
+                            <span class="price-current">₹{{ "%.2f"|format(product.price) }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="product-actions">
+                            {% if session.user_id and session.role == 'customer' %}
+                                {% if product.quantity > 0 %}
+                                <button class="btn btn-add-cart" onclick="addToCartQuick({{ product.id }}); return false;">
+                                    <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                                </button>
+                                <button class="btn btn-buy-now" onclick="buyNow({{ product.id }}); return false;">
+                                    <i class="fas fa-bolt me-2"></i>Buy Now
+                                </button>
+                                {% else %}
+                                <button class="btn btn-out-stock" disabled>
+                                    <i class="fas fa-times-circle me-2"></i>Out of Stock
+                                </button>
+                                {% endif %}
+                            {% else %}
+                            <a href="{{ url_for('login') }}" class="btn btn-login-buy">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login to Buy
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if products %}
+        <div class="text-center mt-5" data-aos="fade-up">
+            <a href="{{ url_for('products') }}" class="btn btn-view-all">
+                View All Products <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Promotional Banner -->
+<section class="promo-banner-section py-5">
+    <div class="container">
+        <div class="promo-banner" data-aos="zoom-in">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="promo-content">
+                        <span class="promo-badge">Limited Time Offer</span>
+                        <h2 class="promo-title">Get 20% Off Your First Order</h2>
+                        <p class="promo-description">Sign up today and enjoy exclusive discounts on premium products</p>
+                        <a href="{{ url_for('register') }}" class="btn btn-promo">
+                            Sign Up Now <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="promo-image">
+                        <!-- Auto-rotating Promo Images -->
+                        <div class="promo-carousel">
+                            <img src="https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800&q=80" 
+                                 alt="Shopping Bags" class="promo-img active rounded-3 shadow-lg">
+                            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80" 
+                                 alt="Fashion Shopping" class="promo-img rounded-3 shadow-lg">
+                            <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=800&q=80" 
+                                 alt="Store Display" class="promo-img rounded-3 shadow-lg">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Customer Reviews</span>
+            <h2 class="section-title">What Our Customers Say</h2>
+            <p class="section-description">Real feedback from real customers</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Amazing quality products and fast delivery. Highly recommended!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h5>Rahul Sharma</h5>
+                            <span>Verified Buyer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Best online shopping experience. Great customer service!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h5>Priya Patel</h5>
+                            <span>Verified Buyer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="testimonial-text">"Wide variety of products at competitive prices. Love it!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h5>Amit Kumar</h5>
+                            <span>Verified Buyer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="newsletter-section py-5">
+    <div class="container">
+        <div class="newsletter-box" data-aos="fade-up">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h3 class="newsletter-title">Subscribe to Our Newsletter</h3>
+                    <p class="newsletter-description">Get the latest updates on new products and exclusive offers</p>
+                </div>
+                <div class="col-lg-6">
+                    <form class="newsletter-form" id="newsletterForm" method="POST" action="{{ url_for('subscribe_newsletter') }}">
+                        <div class="input-group">
+                            <input type="email" 
+                                   name="email" 
+                                   class="form-control" 
+                                   placeholder="Enter your email address" 
+                                   required>
+                            <button class="btn btn-newsletter" type="submit">
+                                Subscribe <i class="fas fa-paper-plane ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- AOS Animation Library -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+<!-- Carousel Styles -->
+<style>
+/* Enhanced Video Background */
+.modern-hero-section {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.hero-video-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.hero-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    z-index: 1;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+        rgba(30, 64, 175, 0.85) 0%, 
+        rgba(59, 130, 246, 0.75) 50%,
+        rgba(96, 165, 250, 0.65) 100%);
+    z-index: 2;
+    animation: gradientShift 10s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background: linear-gradient(135deg, 
+            rgba(30, 64, 175, 0.85) 0%, 
+            rgba(59, 130, 246, 0.75) 50%,
+            rgba(96, 165, 250, 0.65) 100%);
+    }
+    50% {
+        background: linear-gradient(135deg, 
+            rgba(59, 130, 246, 0.85) 0%, 
+            rgba(96, 165, 250, 0.75) 50%,
+            rgba(30, 64, 175, 0.65) 100%);
+    }
+}
+
+/* Animated Geometric Shapes */
+.hero-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.shape-1 {
+    width: 300px;
+    height: 300px;
+    top: 10%;
+    left: 5%;
+    animation: float 20s ease-in-out infinite;
+}
+
+.shape-2 {
+    width: 200px;
+    height: 200px;
+    top: 60%;
+    right: 10%;
+    animation: float 15s ease-in-out infinite reverse;
+}
+
+.shape-3 {
+    width: 150px;
+    height: 150px;
+    bottom: 15%;
+    left: 15%;
+    animation: float 18s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) translateX(0) scale(1);
+    }
+    25% {
+        transform: translateY(-30px) translateX(20px) scale(1.1);
+    }
+    50% {
+        transform: translateY(-60px) translateX(-20px) scale(0.9);
+    }
+    75% {
+        transform: translateY(-30px) translateX(20px) scale(1.05);
+    }
+}
+
+.hero-content {
+    position: relative;
+    z-index: 4;
+}
+
+.hero-carousel {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    z-index: 1; /* Lower z-index for carousel */
+}
+
+.carousel-images {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.carousel-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    z-index: 1;
+}
+
+.carousel-img.active {
+    opacity: 1;
+    z-index: 2;
+}
+
+.carousel-indicators {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 50; /* Above images but below floating cards */
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid white;
+}
+
+.indicator.active {
+    background: white;
+    width: 30px;
+    border-radius: 6px;
+}
+
+.indicator:hover {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+/* Promo Carousel Styles */
+.promo-carousel {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    z-index: 1;
+}
+
+.promo-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    z-index: 1;
+}
+
+.promo-img.active {
+    opacity: 1;
+    z-index: 2;
+}
+
+/* Ensure floating cards are always on top */
+.hero-image-showcase {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-image-showcase .floating-card {
+    z-index: 100 !important; /* Force floating cards to be on top */
+}
+
+@media (max-width: 768px) {
+    .hero-carousel {
+        height: 350px;
+    }
+    .promo-carousel {
+        height: 300px;
+    }
+    .shape {
+        display: none; /* Hide shapes on mobile for performance */
+    }
+}
+</style>
+
+<script>
+    // AOS Animation
+    AOS.init({
+        duration: 800,
+        once: true,
+        offset: 100
+    });
+
+    // Auto-rotating Image Carousel
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.carousel-img');
+    const indicators = document.querySelectorAll('.indicator');
+    const totalSlides = slides.length;
+    let autoPlayInterval;
+
+    function showSlide(index) {
+        // Remove active class from all slides and indicators
+        slides.forEach(slide => slide.classList.remove('active'));
+        indicators.forEach(indicator => indicator.classList.remove('active'));
+        
+        // Add active class to current slide and indicator
+        slides[index].classList.add('active');
+        indicators[index].classList.add('active');
+        
+        currentSlide = index;
+    }
+
+    function nextSlide() {
+        let next = (currentSlide + 1) % totalSlides;
+        showSlide(next);
+    }
+
+    function startAutoPlay() {
+        autoPlayInterval = setInterval(nextSlide, 3000); // Change image every 3 seconds
+    }
+
+    function stopAutoPlay() {
+        clearInterval(autoPlayInterval);
+    }
+
+    // Manual control with indicators
+    indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => {
+            stopAutoPlay();
+            showSlide(index);
+            startAutoPlay(); // Restart autoplay after manual selection
+        });
+    });
+
+    // Pause on hover
+    const carousel = document.querySelector('.hero-carousel');
+    if (carousel) {
+        carousel.addEventListener('mouseenter', stopAutoPlay);
+        carousel.addEventListener('mouseleave', startAutoPlay);
+    }
+
+    // Start autoplay when page loads
+    startAutoPlay();
+
+    // Promo Banner Auto-rotating Carousel
+    let currentPromoSlide = 0;
+    const promoSlides = document.querySelectorAll('.promo-img');
+    const totalPromoSlides = promoSlides.length;
+    let promoAutoPlayInterval;
+
+    function showPromoSlide(index) {
+        promoSlides.forEach(slide => slide.classList.remove('active'));
+        promoSlides[index].classList.add('active');
+        currentPromoSlide = index;
+    }
+
+    function nextPromoSlide() {
+        let next = (currentPromoSlide + 1) % totalPromoSlides;
+        showPromoSlide(next);
+    }
+
+    function startPromoAutoPlay() {
+        promoAutoPlayInterval = setInterval(nextPromoSlide, 4000); // Change every 4 seconds
+    }
+
+    // Start promo carousel
+    if (promoSlides.length > 0) {
+        startPromoAutoPlay();
+    }
+</script>
+{% endblock %}

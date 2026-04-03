@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping Cart - E-Commerce{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Shopping Cart</h2>
+
+    {% if cart_items %}
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Cart Items -->
+            {% for item in cart_items %}
+            <div class="cart-item">
+                <div class="row align-items-center">
+                    <div class="col-md-2">
+                        <img src="{{ item.image_url | image_url }}" class="img-fluid rounded" alt="{{ item.name }}">
+                    </div>
+                    <div class="col-md-4">
+                        <h6>{{ item.name }}</h6>
+                        <p class="text-muted small mb-0">{{ item.business_name }}</p>
+                        <p class="text-success small mb-0">
+                            {% if item.stock > 0 %}
+                                In Stock ({{ item.stock }} available)
+                            {% else %}
+                                Out of Stock
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-2">
+                        <span class="fw-bold">₹{{ "%.2f"|format(item.price) }}</span>
+                    </div>
+                    <div class="col-md-2">
+                        <form method="POST" action="{{ url_for('update_cart') }}" class="d-inline">
+                            <input type="hidden" name="cart_id" value="{{ item.id }}">
+                            <div class="input-group input-group-sm">
+                                <button type="button" class="btn btn-outline-secondary" onclick="decreaseQuantity(this)">-</button>
+                                <input type="number" class="form-control text-center" name="quantity" 
+                                       value="{{ item.quantity }}" min="1" max="{{ item.stock }}" 
+                                       onchange="this.form.submit()">
+                                <button type="button" class="btn btn-outline-secondary" onclick="increaseQuantity(this)">+</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-1">
+                        <span class="fw-bold">₹{{ "%.2f"|format(item.price * item.quantity) }}</span>
+                    </div>
+                    <div class="col-md-1">
+                        <a href="{{ url_for('remove_from_cart', cart_id=item.id) }}" 
+                           class="btn btn-sm btn-outline-danger" 
+                           onclick="return confirm('Remove this item from cart?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal ({{ cart_items|length }} items)</span>
+                        <span>₹{{ "%.2f"|format(total) }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Shipping</span>
+                        <span class="text-success">FREE</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong>Total</strong>
+                        <strong>₹{{ "%.2f"|format(total) }}</strong>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-lg">
+                            Proceed to Checkout
+                        </a>
+                        <a href="{{ url_for('products') }}" class="btn btn-outline-primary">
+                            Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Empty Cart -->
+    <div class="text-center py-5">
+        <i class="fas fa-shopping-cart fa-5x text-muted mb-4"></i>
+        <h4>Your cart is empty</h4>
+        <p class="text-muted mb-4">Add some products to get started</p>
+        <a href="{{ url_for('products') }}" class="btn btn-primary">Start Shopping</a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function decreaseQuantity(button) {
+    const input = button.nextElementSibling;
+    const currentValue = parseInt(input.value);
+    if (currentValue > 1) {
+        input.value = currentValue - 1;
+        input.form.submit();
+    }
+}
+
+function increaseQuantity(button) {
+    const input = button.previousElementSibling;
+    const currentValue = parseInt(input.value);
+    const maxValue = parseInt(input.getAttribute('max'));
+    if (currentValue < maxValue) {
+        input.value = currentValue + 1;
+        input.form.submit();
+    }
+}
+</script>
+{% endblock %}

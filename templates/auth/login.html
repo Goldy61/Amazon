@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="auth-card card shadow-lg border-0">
+                <div class="auth-card-header text-center py-4">
+                    <i class="fas fa-user-circle fa-3x mb-2"></i>
+                    <h4 class="mb-0">Welcome Back</h4>
+                    <small class="opacity-75">Sign in to your account</small>
+                </div>
+                <div class="card-body p-4">
+
+                    <form method="POST" id="loginForm" novalidate>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input type="email" class="form-control" id="email" name="email"
+                                       placeholder="you@example.com" autocomplete="email">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="password" name="password"
+                                       placeholder="Enter your password" autocomplete="current-password">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePwd" tabindex="-1">
+                                    <i class="fas fa-eye" id="eyeIcon"></i>
+                                </button>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" id="loginBtn">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <small class="text-muted">Don't have an account?
+                            <a href="{{ url_for('register') }}" class="fw-semibold">Register here</a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.auth-card { border-radius: 16px; overflow: hidden; }
+.auth-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+.input-group-text { background: var(--card-bg); border-right: none; color: var(--text-muted); }
+.input-group .form-control { border-left: none; }
+.input-group .form-control:focus { border-color: #667eea; box-shadow: none; }
+.input-group:focus-within .input-group-text { border-color: #667eea; }
+.field-error { font-size: 0.8rem; color: #dc3545; margin-top: 4px; display: none; }
+.field-error.show { display: block; }
+</style>
+
+<script>
+const loginForm = document.getElementById('loginForm');
+
+// Toggle password visibility
+document.getElementById('togglePwd').addEventListener('click', () => {
+    const pwd = document.getElementById('password');
+    const icon = document.getElementById('eyeIcon');
+    if (pwd.type === 'password') {
+        pwd.type = 'text';
+        icon.className = 'fas fa-eye-slash';
+    } else {
+        pwd.type = 'password';
+        icon.className = 'fas fa-eye';
+    }
+});
+
+// Helpers
+function setValid(input) {
+    input.classList.remove('is-invalid');
+    input.classList.add('is-valid');
+}
+function setInvalid(input, msg) {
+    input.classList.remove('is-valid');
+    input.classList.add('is-invalid');
+    input.closest('.input-group').querySelector('.invalid-feedback').textContent = msg;
+}
+function clearState(input) {
+    input.classList.remove('is-valid', 'is-invalid');
+}
+
+// Live validation
+document.getElementById('email').addEventListener('input', function() {
+    if (!this.value.trim()) { clearState(this); return; }
+    const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim());
+    ok ? setValid(this) : setInvalid(this, 'Enter a valid email address.');
+});
+
+document.getElementById('password').addEventListener('input', function() {
+    if (!this.value) { clearState(this); return; }
+    this.value.length >= 6 ? setValid(this) : setInvalid(this, 'Password must be at least 6 characters.');
+});
+
+// Submit validation
+loginForm.addEventListener('submit', function(e) {
+    let valid = true;
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+
+    if (!email.value.trim()) {
+        setInvalid(email, 'Email is required.'); valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+        setInvalid(email, 'Enter a valid email address.'); valid = false;
+    }
+
+    if (!password.value) {
+        setInvalid(password, 'Password is required.'); valid = false;
+    } else if (password.value.length < 6) {
+        setInvalid(password, 'Password must be at least 6 characters.'); valid = false;
+    }
+
+    if (!valid) { e.preventDefault(); return; }
+
+    const btn = document.getElementById('loginBtn');
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing in...';
+    btn.disabled = true;
+});
+</script>
+{% endblock %}

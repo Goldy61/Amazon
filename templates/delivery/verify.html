@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Delivery - ShopHub{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-shield-alt"></i> Verify Delivery with OTP</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Order Details -->
+                    <div class="order-info mb-4">
+                        <h6 class="text-muted mb-3">Order Details</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <strong>Order Number:</strong><br>
+                                <span class="text-primary">{{ order.order_number }}</span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <strong>Amount:</strong><br>
+                                ₹{{ "%.2f"|format(order.final_amount) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <strong>Customer:</strong><br>
+                                {{ order.first_name }} {{ order.last_name }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <strong>Phone:</strong><br>
+                                {{ order.customer_phone }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delivery Address -->
+                    <div class="delivery-address mb-4 p-3 bg-light rounded">
+                        <h6 class="text-muted mb-2"><i class="fas fa-map-marker-alt"></i> Delivery Address</h6>
+                        <p class="mb-0">
+                            {{ order.shipping_address.address }}<br>
+                            {{ order.shipping_address.city }}, {{ order.shipping_address.state }}<br>
+                            PIN: {{ order.shipping_address.pincode }}
+                        </p>
+                    </div>
+
+                    <!-- OTP Verification Form -->
+                    <form method="POST" id="verifyForm">
+                        <div class="mb-4">
+                            <label for="otp" class="form-label">
+                                <i class="fas fa-key"></i> Enter OTP from Customer
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg text-center otp-input" 
+                                   id="otp" 
+                                   name="otp" 
+                                   placeholder="000000"
+                                   maxlength="6"
+                                   pattern="[0-9]{6}"
+                                   required
+                                   autofocus>
+                            <small class="form-text text-muted">
+                                Ask the customer for the 6-digit OTP to complete delivery
+                            </small>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Instructions:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Ask the customer for their delivery OTP</li>
+                                <li>Enter the 6-digit code above</li>
+                                <li>Click "Verify & Complete Delivery"</li>
+                                <li>Customer and seller will receive confirmation emails</li>
+                            </ul>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check-circle"></i> Verify & Complete Delivery
+                            </button>
+                            <a href="{{ url_for('delivery_dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Dashboard
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Help Card -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2"><i class="fas fa-question-circle"></i> Need Help?</h6>
+                    <p class="mb-0 small">
+                        If the customer doesn't have the OTP or there's an issue, contact support at 
+                        <a href="tel:1800-123-4567">1800-123-4567</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-format OTP input
+document.getElementById('otp').addEventListener('input', function(e) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+
+// Form validation
+document.getElementById('verifyForm').addEventListener('submit', function(e) {
+    const otp = document.getElementById('otp').value;
+    if (otp.length !== 6) {
+        e.preventDefault();
+        alert('Please enter a valid 6-digit OTP');
+        return false;
+    }
+});
+</script>
+
+<style>
+.otp-input {
+    font-size: 32px;
+    letter-spacing: 10px;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+}
+
+.order-info {
+    border-left: 4px solid var(--primary-blue);
+    padding-left: 20px;
+}
+
+.delivery-address {
+    border-left: 4px solid #10b981;
+}
+</style>
+{% endblock %}

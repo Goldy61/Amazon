@@ -1,0 +1,754 @@
+{% extends "base.html" %}
+
+{% block title %}Compare Products - ShopHub{% endblock %}
+
+{% block content %}
+<div class="comparison-container">
+    <div class="comparison-header">
+        <h1><i class="fas fa-balance-scale"></i> Product Comparison</h1>
+        <p>Compare up to 3 products side by side</p>
+    </div>
+
+    {% if products %}
+    <div class="comparison-actions">
+        <button class="btn btn-outline-primary" onclick="window.print()">
+            <i class="fas fa-print"></i> Print Comparison
+        </button>
+        <button class="btn btn-outline-danger" onclick="clearComparison()">
+            <i class="fas fa-trash"></i> Clear All
+        </button>
+        <a href="{{ url_for('products') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-plus"></i> Add More Products
+        </a>
+    </div>
+
+    <div class="comparison-table-wrapper">
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th class="feature-column">Features</th>
+                    {% for product in products %}
+                    <th class="product-column">
+                        <div class="product-header">
+                            <img src="{{ product['image_url'] }}" alt="{{ product['name'] }}" class="product-image">
+                            <h5>{{ product['name'] }}</h5>
+                            <button class="btn-remove" onclick="removeProduct({{ product['id'] }})" title="Remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </th>
+                    {% endfor %}
+                    {% if products|length < 3 %}
+                    <th class="product-column add-product-column">
+                        <a href="{{ url_for('products') }}" class="add-product-btn">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Add Product</span>
+                        </a>
+                    </th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Price -->
+                <tr class="highlight-row">
+                    <td class="feature-name">
+                        <i class="fas fa-tag"></i> Price
+                    </td>
+                    {% for product in products %}
+                    <td class="product-value">
+                        {% if product['discount_price'] %}
+                        <div class="price-wrapper">
+                            <span class="current-price">₹{{ "{:,.2f}".format(product['discount_price']) }}</span>
+                            <span class="original-price">₹{{ "{:,.2f}".format(product['price']) }}</span>
+                            <span class="discount-badge">
+                                {{ "%.0f"|format(((product['price'] - product['discount_price']) / product['price'] * 100)) }}% OFF
+                            </span>
+                        </div>
+                        {% else %}
+                        <span class="current-price">₹{{ "{:,.2f}".format(product['price']) }}</span>
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                    {% if products|length < 3 %}
+                    <td class="product-value empty-cell">-</td>
+                    {% endif %}
+                </tr>
+
+                <!-- Rating -->
+                <tr>
+                    <td class="feature-name">
+                        <i class="fas fa-star"></i> Rating
+                    </td>
+                    {% for product in products %}
+                    <td class="product-value">
+                        <div class="rating-wrapper">
+                            <div class="stars">
+                                {% set rating = product['avg_rating']|float %}
+                                {% for i in range(5) %}
+                                    {% if i < rating|int %}
+                                        <i class="fas fa-star"></i>
+                                    {% elif i < rating %}
+                                        <i class="fas fa-star-half-alt"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <span class="rating-text">{{ "%.1f"|format(product['avg_rating']) }}/5</span>
+                            <span class="review-count">({{ product['review_count'] }} reviews)</span>
+                        </div>
+                    </td>
+                    {% endfor %}
+                    {% if products|length < 3 %}
+                    <td class="product-value empty-cell">-</td>
+                    {% endif %}
+                </tr>
+
+                <!-- Category -->
+                <tr>
+                    <td class="feature-name">
+                        <i class="fas fa-folder"></i> Category
+                    </td>
+                    {% for product in products %}
+                    <td class="product-value">{{ product['category_name'] }}</td>
+                    {% endfor %}
+                    {% if products|length < 3 %}
+                    <td class="product-value empty-cell">-</td>
+                    {% endif %}
+                </tr>
+
+                <!-- Brand/Seller -->
+                <tr>
+                    <td class="feature-name">
+                        <i class="fas fa-store"></i> Seller
+                    </td>
+                    {% for product in products %}
+                    <td class="product-value">{{ product['business_name'] }}</td>
+                    {% endfor %}
+                    {% if products|length < 3 %}
+                    <td class="product-value empty-cell">-</td>
+                    {% endif %}
+                </tr>
+
+                <!-- Availability -->
+                <tr class="highlight-row">
+                    <td class="feature-name">
+                        <i class="fas fa-box"></i> Availability
+                    </td>
+                    {% for product in products %}
+                    <td class="product-value">
+                        {% if product['in_stock'] %}
+                        <span class="badge badge-success">
+                            <i class="fas fa-check-circle"></i> In Stock
+                        </span>
+                        {% else %}
+                        <span class="badge badge-danger">
+                            <i class="fas fa-times-circle"></i> Out of Stock
+                        </span>
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                    {% if products|length < 3 %}
+                    <td class="product-value empty-cell">-</td>
+                    {% endif %}
+                </tr>
+
+                <!-- Description -->
+                <tr>
+                    <td class="feature-name">
+                        <i class="fas fa-info-circle"></i> Description
+                    </td>
+                    {% for product in products %}
+                    <td class="product-value description-cell">
+                        {{ product['description'][:200] }}{% if product['description']|length > 200 %}...{% endif %}
+                    </td>
+                    {% endfor %}
+                    {% if products|length < 3 %}
+                    <td class="product-value empty-cell">-</td>
+                    {% endif %}
+                </tr>
+
+                <!-- Specifications -->
+                {% if products[0]['specifications'] %}
+                <tr class="section-header">
+                    <td colspan="{{ products|length + 1 if products|length < 3 else products|length + 1 }}">
+                        <strong>Specifications</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="feature-name">
+                        <i class="fas fa-list"></i> Details
+                    </td>
+                    {% for product in products %}
+                    <td class="product-value specifications-cell">
+                        {{ product['specifications'] }}
+                    </td>
+                    {% endfor %}
+                    {% if products|length < 3 %}
+                    <td class="product-value empty-cell">-</td>
+                    {% endif %}
+                </tr>
+                {% endif %}
+
+                <!-- Actions -->
+                <tr class="action-row">
+                    <td class="feature-name">
+                        <i class="fas fa-shopping-cart"></i> Actions
+                    </td>
+                    {% for product in products %}
+                    <td class="product-value">
+                        <div class="action-buttons">
+                            <a href="/product/{{ product['id'] }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                            {% if product['in_stock'] %}
+                            <button class="btn btn-sm btn-success" onclick="addToCart({{ product['id'] }})">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </button>
+                            {% else %}
+                            <button class="btn btn-sm btn-secondary" disabled>
+                                <i class="fas fa-ban"></i> Out of Stock
+                            </button>
+                            {% endif %}
+                        </div>
+                    </td>
+                    {% endfor %}
+                    {% if products|length < 3 %}
+                    <td class="product-value empty-cell">-</td>
+                    {% endif %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="empty-comparison">
+        <div class="empty-icon">
+            <i class="fas fa-balance-scale"></i>
+        </div>
+        <h3>No Products to Compare</h3>
+        <p>Start by adding products to your comparison list</p>
+        <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-shopping-bag"></i> Browse Products
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+/* Comparison Container */
+.comparison-container {
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.comparison-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.comparison-header h1 {
+    color: #1E40AF;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.comparison-header p {
+    color: #6b7280;
+    font-size: 16px;
+}
+
+.comparison-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+/* Comparison Table */
+.comparison-table-wrapper {
+    overflow-x: auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+.comparison-table thead {
+    background: linear-gradient(135deg, #1E40AF, #3B82F6);
+    color: white;
+}
+
+.comparison-table th {
+    padding: 20px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.feature-column {
+    width: 200px;
+    text-align: left !important;
+    position: sticky;
+    left: 0;
+    background: linear-gradient(135deg, #1E40AF, #3B82F6);
+    z-index: 10;
+}
+
+.product-column {
+    min-width: 300px;
+}
+
+.product-header {
+    position: relative;
+}
+
+.product-header .product-image {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border: 3px solid white;
+}
+
+.product-header h5 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.btn-remove {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    background: rgba(239, 68, 68, 0.9);
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-remove:hover {
+    background: #dc2626;
+    transform: scale(1.1);
+}
+
+/* Table Body */
+.comparison-table tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+    transition: background 0.3s ease;
+}
+
+.comparison-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.comparison-table td {
+    padding: 20px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.feature-name {
+    font-weight: 600;
+    color: #1f2937;
+    text-align: left !important;
+    position: sticky;
+    left: 0;
+    background: white;
+    z-index: 5;
+}
+
+.comparison-table tbody tr:hover .feature-name {
+    background: #f9fafb;
+}
+
+.product-value {
+    color: #4b5563;
+}
+
+.highlight-row {
+    background: #f0f9ff !important;
+}
+
+.highlight-row:hover {
+    background: #e0f2fe !important;
+}
+
+.highlight-row .feature-name {
+    background: #f0f9ff !important;
+}
+
+.highlight-row:hover .feature-name {
+    background: #e0f2fe !important;
+}
+
+/* Price Styling */
+.price-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.current-price {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1E40AF;
+}
+
+.original-price {
+    font-size: 16px;
+    color: #9ca3af;
+    text-decoration: line-through;
+}
+
+.discount-badge {
+    display: inline-block;
+    background: #10b981;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Rating Styling */
+.rating-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.stars {
+    color: #fbbf24;
+    font-size: 18px;
+}
+
+.rating-text {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.review-count {
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+/* Badge Styling */
+.badge {
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.badge-success {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Description Cell */
+.description-cell {
+    text-align: left !important;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.specifications-cell {
+    text-align: left !important;
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+/* Section Header */
+.section-header td {
+    background: #f3f4f6;
+    font-weight: 700;
+    color: #1f2937;
+    padding: 15px 20px;
+}
+
+/* Action Row */
+.action-row {
+    background: #f9fafb !important;
+}
+
+.action-row .feature-name {
+    background: #f9fafb !important;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Add Product Column */
+.add-product-column {
+    background: #f9fafb;
+}
+
+.add-product-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 40px 20px;
+    color: #6b7280;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.add-product-btn:hover {
+    color: #1E40AF;
+    transform: scale(1.05);
+}
+
+.add-product-btn i {
+    font-size: 48px;
+}
+
+.empty-cell {
+    color: #d1d5db;
+    font-style: italic;
+}
+
+/* Empty State */
+.empty-comparison {
+    text-align: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.empty-icon {
+    font-size: 80px;
+    color: #d1d5db;
+    margin-bottom: 20px;
+}
+
+.empty-comparison h3 {
+    color: #1f2937;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.empty-comparison p {
+    color: #6b7280;
+    font-size: 16px;
+    margin-bottom: 30px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .comparison-header h1 {
+        font-size: 24px;
+    }
+    
+    .comparison-actions {
+        flex-direction: column;
+    }
+    
+    .comparison-actions .btn {
+        width: 100%;
+    }
+    
+    .product-column {
+        min-width: 250px;
+    }
+    
+    .product-header .product-image {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .current-price {
+        font-size: 20px;
+    }
+    
+    .action-buttons .btn {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .comparison-actions,
+    .btn-remove,
+    .add-product-column {
+        display: none !important;
+    }
+    
+    .comparison-table-wrapper {
+        box-shadow: none;
+    }
+    
+    .comparison-table {
+        page-break-inside: avoid;
+    }
+}
+
+/* Dark Mode */
+body.dark-mode .comparison-table-wrapper {
+    background: #1f2937;
+}
+
+body.dark-mode .comparison-table tbody tr {
+    border-bottom-color: #374151;
+}
+
+body.dark-mode .comparison-table tbody tr:hover {
+    background: #374151;
+}
+
+body.dark-mode .feature-name {
+    background: #1f2937;
+    color: #f3f4f6;
+}
+
+body.dark-mode .comparison-table tbody tr:hover .feature-name {
+    background: #374151;
+}
+
+body.dark-mode .product-value {
+    color: #d1d5db;
+}
+
+body.dark-mode .empty-comparison {
+    background: #1f2937;
+}
+</style>
+
+<script>
+function removeProduct(productId) {
+    if (confirm('Remove this product from comparison?')) {
+        fetch('/api/compare/remove', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ product_id: productId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to remove product');
+        });
+    }
+}
+
+function clearComparison() {
+    if (confirm('Clear all products from comparison?')) {
+        fetch('/api/compare/clear', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '/compare';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to clear comparison');
+        });
+    }
+}
+
+function addToCart(productId) {
+    fetch('/api/cart/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            product_id: productId,
+            quantity: 1
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Product added to cart!', 'success');
+            updateCartCount();
+        } else {
+            showNotification(data.message || 'Failed to add to cart', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Failed to add to cart', 'error');
+    });
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        <span>${message}</span>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+}
+
+function updateCartCount() {
+    fetch('/api/cart_count')
+        .then(response => response.json())
+        .then(data => {
+            const cartBadge = document.querySelector('.cart-count');
+            if (cartBadge && data.count !== undefined) {
+                cartBadge.textContent = data.count;
+            }
+        })
+        .catch(error => {
+            console.error('Error updating cart count:', error);
+        });
+}
+</script>
+{% endblock %}

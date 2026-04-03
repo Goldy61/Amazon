@@ -1,0 +1,115 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Order Delivered{% endblock %}
+
+{% block content %}
+<tr>
+    <td style="padding: 40px 30px;">
+        <!-- Icon -->
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div style="display: inline-block; width: 80px; height: 80px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 50%; line-height: 80px; font-size: 40px;">
+                ✅
+            </div>
+        </div>
+
+        <!-- Greeting -->
+        <h1 style="color: #1f2937; font-size: 28px; font-weight: 700; margin: 0 0 20px 0; text-align: center;">
+            {% if recipient_type == 'customer' %}
+            Order Delivered Successfully!
+            {% else %}
+            Order Delivered to Customer
+            {% endif %}
+        </h1>
+
+        <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
+            Hi <strong>{{ recipient_name }}</strong>,
+        </p>
+
+        <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+            {% if recipient_type == 'customer' %}
+            Great news! Your order has been successfully delivered and verified with OTP.
+            {% else %}
+            The order has been successfully delivered to the customer and verified with OTP.
+            {% endif %}
+        </p>
+
+        <!-- Order Details Box -->
+        <div style="background: #f3f4f6; border-radius: 12px; padding: 25px; margin: 30px 0;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="padding: 10px 0; color: #6b7280; font-size: 14px;">
+                        Order Number:
+                    </td>
+                    <td style="padding: 10px 0; color: #1f2937; font-size: 16px; font-weight: 600; text-align: right;">
+                        {{ order_number }}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0; color: #6b7280; font-size: 14px;">
+                        Status:
+                    </td>
+                    <td style="padding: 10px 0; text-align: right;">
+                        <span style="background: #10b981; color: white; padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;">
+                            Delivered
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0; color: #6b7280; font-size: 14px;">
+                        Delivered At:
+                    </td>
+                    <td style="padding: 10px 0; color: #1f2937; font-size: 14px; text-align: right;">
+                        {{ now().strftime('%B %d, %Y at %I:%M %p') }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        {% if recipient_type == 'customer' %}
+        <!-- Customer Message -->
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; margin: 30px 0; border-radius: 8px;">
+            <p style="color: #1e40af; font-size: 15px; line-height: 1.6; margin: 0;">
+                <strong>Thank you for shopping with ShopHub!</strong><br>
+                We hope you love your purchase. If you have any questions or concerns, please don't hesitate to contact us.
+            </p>
+        </div>
+
+        <!-- Review Request -->
+        <p style="color: #4b5563; font-size: 15px; line-height: 1.6; margin: 30px 0 20px 0; text-align: center;">
+            How was your experience? We'd love to hear your feedback!
+        </p>
+
+        {% else %}
+        <!-- Seller Message -->
+        <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 20px; margin: 30px 0; border-radius: 8px;">
+            <p style="color: #065f46; font-size: 15px; line-height: 1.6; margin: 0;">
+                <strong>Delivery Completed!</strong><br>
+                The order has been successfully delivered to the customer. Payment will be processed according to your settlement schedule.
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Action Button -->
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ url_for('order_history' if recipient_type == 'customer' else 'seller_orders', _external=True) }}" 
+               style="display: inline-block; background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; text-decoration: none; padding: 14px 40px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);">
+                View Order Details
+            </a>
+        </div>
+
+        <!-- Support Info -->
+        <div style="background: #f9fafb; border-radius: 8px; padding: 20px; margin: 30px 0; text-align: center;">
+            <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin: 0 0 10px 0;">
+                Need help? Contact our support team
+            </p>
+            <p style="color: #1f2937; font-size: 14px; margin: 0;">
+                📧 <a href="mailto:support@shophub.com" style="color: #3b82f6; text-decoration: none;">support@shophub.com</a>
+            </p>
+        </div>
+
+        <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin: 30px 0 0 0; text-align: center;">
+            Thank you for choosing ShopHub!
+        </p>
+    </td>
+</tr>
+{% endblock %}
